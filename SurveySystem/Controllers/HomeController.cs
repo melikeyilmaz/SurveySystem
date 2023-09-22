@@ -93,7 +93,7 @@ namespace SurveySystem.Controllers
             if (ModelState.IsValid)
             {
                 //Bir SignIn işleminin sonucu bir tane olabilir.
-                var signInResult = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, true);
+                var signInResult = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                 if (signInResult.Succeeded)
                 {
                     //if (!string.IsNullOrWhiteSpace(model.ReturnUrl))
@@ -147,6 +147,12 @@ namespace SurveySystem.Controllers
         public IActionResult MemberPage()
         {
             return View();
+        }
+                
+        public async Task<IActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()

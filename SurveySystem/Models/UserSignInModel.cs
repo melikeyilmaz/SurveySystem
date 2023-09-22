@@ -9,6 +9,7 @@ namespace SurveySystem.Models
 
         [Required(ErrorMessage = "Şifre girilmesi gereklidir.")]
         public string Password { get; set; }
+        public bool RememberMe { get; set; }
 
         //public string ReturnUrl { get; set; }
     }
