@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -10,16 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//builder.Services.AddIdentity<AppUser, AppRole>(options =>
-//{
-//    options.Password.RequireDigit = true; // Þifreler en az bir rakam içermelidir.
-//    options.Password.RequiredLength = 8; // Þifre en az 8 karakter uzunluðunda olmalýdýr.
-//    options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
-//    options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
-//    options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
-//    options.SignIn.RequireConfirmedEmail = false;
-//    options.SignIn.RequireConfirmedPhoneNumber = false;
-//}).AddEntityFrameworkStores<SurveyContext>();
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -49,6 +40,52 @@ builder.Services.AddDbContext<SurveyContext>(options =>
 options.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=SurveySystem;Integrated Security=True"));
 
 var app = builder.Build();
+
+
+// Admin kullanýcýsýný baþlatma sýrasýnda oluþtur
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+
+    // UserManager ve RoleManager'ý al
+    var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+    // Admin kullanýcýsýnýn e-posta ve þifresini burada belirtin
+    string adminEmail = "admin@example.com";
+    string adminPassword = "Admin123";
+
+    // Admin kullanýcýsýný oluþtur (eðer yoksa)
+    var adminUser = userManager.FindByEmailAsync(adminEmail).Result;
+    if (adminUser == null)
+    {
+        adminUser = new AppUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail
+        };
+
+        // Admin rolünü oluþtur (eðer yoksa)
+        if (!roleManager.RoleExistsAsync("Admin").Result)
+        {
+            var adminRole = new AppRole
+            {
+                Name = "Admin"
+            };
+            roleManager.CreateAsync(adminRole).Wait();
+        }
+
+        // Admin kullanýcýsýný oluþtur
+        var result = userManager.CreateAsync(adminUser, adminPassword).Result;
+
+        // Admin kullanýcýsýný "Admin" rolüne ata
+        if (result.Succeeded)
+        {
+            userManager.AddToRoleAsync(adminUser, "Admin").Wait();
+        }
+    }
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
