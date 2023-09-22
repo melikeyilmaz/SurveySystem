@@ -62,7 +62,9 @@ using (var scope = app.Services.CreateScope())
         adminUser = new AppUser
         {
             UserName = adminEmail,
-            Email = adminEmail
+            Email = adminEmail,
+            FirstName = "Admin", 
+            LastName = "Admin"
         };
 
         // Admin rolünü oluþtur (eðer yoksa)

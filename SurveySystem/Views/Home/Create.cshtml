@@ -6,10 +6,16 @@
 <form asp-action="Create" method="post" class="p*3 w-75 mx-auto shadow">
 
     <div class="text-danger mt-2" asp-validation-summary="ModelOnly"></div>
+    <input type="hidden" asp-for="UserName" value="@Model.Email" />
     <div class="mb-3">
-        <label asp-for="UserName">Kullanıcı Ad:</label>
-        <input asp-for="UserName" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
+        <label asp-for="FirstName">Kullanıcı Ad:</label>
+        <input asp-for="FirstName" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LastName">Kullanıcı Soyad:</label>
+        <input asp-for="LastName" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="Email">Email</label>
@@ -33,4 +39,9 @@
        <button type="submit" class="btn btn-primary">Kaydet</button>
     </div>
 
-</form> 
+</form>
+
+<script>
+    // JavaScript kullanarak UserName alanına değeri atayın
+    document.getElementById("UserName").value = "@Model.Email";
+</script>

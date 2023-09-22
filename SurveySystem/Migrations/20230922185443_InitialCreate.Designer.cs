@@ -12,7 +12,7 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    [Migration("20230922080856_InitialCreate")]
+    [Migration("20230922185443_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -182,6 +182,14 @@ namespace SurveySystem.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
