@@ -1,0 +1,24 @@
+﻿@model SurveySystem.Models.UserSignInModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form asp-action="SignIn" method="post" class="p*3 w-75 mx-auto shadow">
+
+    <div class="text-danger mt-2" asp-validation-summary="ModelOnly"></div>
+    @* <input type="hidden" asp-for="ReturnUrl" /> *@
+    <div class="mb-3">
+        <label asp-for="UserName">Kullanıcı Ad:</label>
+        <input asp-for="UserName" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>   
+    <div class="mb-3">
+        <label asp-for="Password">Şifre </label>
+        <input type="password" asp-for="Password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+
+</form> 

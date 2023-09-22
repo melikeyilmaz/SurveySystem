@@ -16,7 +16,18 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
     options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
     options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
-}).AddEntityFrameworkStores<SurveyContext>();  
+}).AddEntityFrameworkStores<SurveyContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy= CookieSecurePolicy.SameAsRequest;
+    options.Cookie.Name = "SurveySystemCookie";
+    options.ExpireTimeSpan = TimeSpan.FromDays(25); //Oturumun 25 gün boyunca geçerli olacaðýný belirtir.
+    options.LoginPath = new PathString("/Home/SignIn"); //Kullanýcýnýn oturum açmasý gerektiðinde yönlendirileceði sayfanýn yolu.
+});
+
 
 builder.Services.AddDbContext<SurveyContext>(options =>
 options.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=SurveySystem;Integrated Security=True"));
@@ -37,7 +48,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapDefaultControllerRoute();
+//});
 
 app.MapControllerRoute(
     name: "default",
