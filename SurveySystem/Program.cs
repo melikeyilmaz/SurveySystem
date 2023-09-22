@@ -1,0 +1,52 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
+using SurveySystem.Context;
+using SurveySystem.Entities;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
+{
+    options.Password.RequireDigit = true; // Þifreler en az bir rakam içermelidir.
+    options.Password.RequiredLength = 8; // Þifre en az 8 karakter uzunluðunda olmalýdýr.
+    options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
+    options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
+    options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
+}).AddEntityFrameworkStores<SurveyContext>();  
+
+builder.Services.AddDbContext<SurveyContext>(options =>
+options.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=SurveySystem;Integrated Security=True"));
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+app.UseStaticFiles();
+
+//app.UseStaticFiles(new StaticFileOptions {
+//    RequestPath="/node_modules",
+//    FileProvider=new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"node_modules"))
+//});
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "home",
+//    pattern: "Home/{action=Create}",
+//    defaults: new { controller = "Home", action = "Create" });
+
+
+app.Run();
