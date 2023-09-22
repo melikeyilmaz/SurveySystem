@@ -28,8 +28,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
     options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
     options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
-    options.SignIn.RequireConfirmedEmail = false;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
+    options.SignIn.RequireConfirmedEmail = false; // E-posta onayý gerektirme.
+    options.SignIn.RequireConfirmedPhoneNumber = false; // Telefon onayý gerektirme.
+    options.User.RequireUniqueEmail = true; // E-posta adreslerinin benzersiz olmasýný saðlar.
 
 }).AddErrorDescriber<CustomErrorDescriber>().AddEntityFrameworkStores<SurveyContext>();
 

@@ -13,12 +13,21 @@ namespace SurveySystem.CustomDescriber
             };
         }
 
-        public override IdentityError DuplicateUserName(string userName)
+        //public override IdentityError DuplicateUserName(string userName)
+        //{
+        //    return new()
+        //    {
+        //        Code = "DuplicateUserName",
+        //        Description = $"Bu {userName} sistemde kayıtlı."
+        //    };
+        //}
+
+        public override IdentityError DuplicateEmail(string email)
         {
             return new()
             {
-                Code = "DuplicateUserName",
-                Description = $"Bu {userName} sistemde kayıtlı."
+                Code = "DuplicateEmail",
+                Description = $"{email} sistemde kayıtlıdır. Sisteme kayıtlı olmayan bir e-posta adresi giriniz."
             };
         }
     }
