@@ -4,10 +4,11 @@ namespace SurveySystem.Models
 {
     public class UserSignInModel
     {
-        [Required(ErrorMessage="Kullanıcı adı girilmesi gereklidir.")]
-        public string UserName { get; set; }
+         [Required(ErrorMessage = "Lütfen e-posta adresini boş geçmeyiniz.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin.")]
+        public string Email { get; set; }
 
-        [Required(ErrorMessage = "Şifre girilmesi gereklidir.")]
+        [Required(ErrorMessage = "Lütfen şifrenizi giriniz.")]
         public string Password { get; set; }
         public bool RememberMe { get; set; }
 

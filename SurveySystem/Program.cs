@@ -2,12 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using SurveySystem.Context;
+using SurveySystem.CustomDescriber;
 using SurveySystem.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//builder.Services.AddIdentity<AppUser, AppRole>(options =>
+//{
+//    options.Password.RequireDigit = true; // Þifreler en az bir rakam içermelidir.
+//    options.Password.RequiredLength = 8; // Þifre en az 8 karakter uzunluðunda olmalýdýr.
+//    options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
+//    options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
+//    options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
+//    options.SignIn.RequireConfirmedEmail = false;
+//    options.SignIn.RequireConfirmedPhoneNumber = false;
+//}).AddEntityFrameworkStores<SurveyContext>();
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -16,13 +28,16 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireLowercase = true; // Þifreler en az bir küçük harf içermelidir.
     options.Password.RequireUppercase = true; // Þifreler en az bir büyük harf içermelidir.
     options.Password.RequireNonAlphanumeric = false; // Þifre en az bir özel karakter içermemelidir.
-}).AddEntityFrameworkStores<SurveyContext>();
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
+
+}).AddErrorDescriber<CustomErrorDescriber>().AddEntityFrameworkStores<SurveyContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy= CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.Name = "SurveySystemCookie";
     options.ExpireTimeSpan = TimeSpan.FromDays(25); //Oturumun 25 gün boyunca geçerli olacaðýný belirtir.
     options.LoginPath = new PathString("/Home/SignIn"); //Kullanýcýnýn oturum açmasý gerektiðinde yönlendirileceði sayfanýn yolu.

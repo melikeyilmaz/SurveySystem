@@ -88,19 +88,22 @@ namespace SurveySystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn(UserSignInModel model)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 //Bir SignIn işleminin sonucu bir tane olabilir.
-                var signInResult = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+                
+
                 if (signInResult.Succeeded)
                 {
                     //if (!string.IsNullOrWhiteSpace(model.ReturnUrl))
                     //{
                     //    return Redirect(model.ReturnUrl);
                     //}
-                    var user = await _userManager.FindByNameAsync(model.UserName);
                     var roles = await _userManager.GetRolesAsync(user);
 
                     if (roles.Contains("Admin"))
