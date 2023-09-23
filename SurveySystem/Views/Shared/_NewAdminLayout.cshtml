@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("/Views/Shared/_HeadPartial.cshtml")
+@await RenderSectionAsync("Styles", required: false)
+<body>
+    <div class="container-scroller">
+        <!-- partial:~/webtheme/Triangle/partials/_navbar.html -->
+        @await Html.PartialAsync("/Views/Shared/_NavHeaderPartial.cshtml")        
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            @await Html.PartialAsync("/Views/Shared/_MenuPartial.cshtml")
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+                @await Html.PartialAsync("/Views/Shared/_FooterPartial.cshtml")
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    @await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
+</body>
+</html>
