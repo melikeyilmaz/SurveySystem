@@ -106,6 +106,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Admin}/{action=DeleteQuestion}/{id?}");
+
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapDefaultControllerRoute();

@@ -19,20 +19,7 @@ namespace SurveySystem.Controllers
         public IActionResult AddQuestion()
         {
             return View();
-        }
-
-        ////Soru ekleme sayfasını gösterir
-        //[HttpGet]
-        //public IActionResult AddQuestion()
-        //{
-        //    var model = new Question();
-
-        //    // Örnek olarak, seçenekleri burada oluşturabilirsiniz.
-        //    //model.Options = Enumerable.Range(1, 5).Select(i => new Option { OptionText = "Seçenek " + i }).ToList();
-        //    //model.Options = new List<Option>();
-        //   // model.Options = Enumerable.Range(1, 5).Select(i => new Option()).ToList();
-        //    return View(model);
-        //}
+        }        
 
         // Soru ekleme formunu kullanarak bir POST işlemi
         [HttpPost]
@@ -46,13 +33,50 @@ namespace SurveySystem.Controllers
             }
             return View(model);
         }
-    
+
 
         public IActionResult QuestionList()
         {
-            // Soruların bir listesini görüntülemek için kullanılabilir
-            var questions = _context.Questions.ToList();
+            // Soruların bir listesini görüntülemek için kullanılır.
+            var questions = _context.Questions
+                        .OrderByDescending(e => e.Id)
+                        .ToList();
+                       
             return View(questions);
+        }
+
+        [HttpGet] //Bu eylem, silinecek soruyu bulmak için kullanılır. 
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var question = _context.Questions.Find(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            return View(question);
+        }
+
+       
+        [HttpPost, ActionName("Delete")] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır. 
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteQuestion(int id)
+        {
+            var question = _context.Questions.Find(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            _context.Questions.Remove(question);
+            _context.SaveChanges();
+
+            return RedirectToAction("QuestionList"); 
         }
     }
 }
