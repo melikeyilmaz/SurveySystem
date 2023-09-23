@@ -1,30 +1,77 @@
 ﻿@model SurveySystem.Models.UserSignInModel
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
 
-<form asp-action="SignIn" method="post" class="p*3 w-75 mx-auto shadow">
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("/Views/Shared/_HeadPartial.cshtml")
+<body>
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+                <div class="row flex-grow">
+                    <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                        <div class="auth-form-transparent text-left p-3">
+                            <div class="brand-logo">
+                                <img src="~/webtheme/Triangle/images/logo.svg" alt="logo">
+                            </div>
+                            <h4>Hoşgeldiniz!</h4>
+                            <h6 class="font-weight-light">Seni tekrar gördüğüme sevindim!</h6>
+                            <form asp-action="SignIn" method="post" class="pt-3">
+                                <div class="form-group">
+                                    <label asp-for="Email">E-posta Adresi:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend bg-transparent">
+                                            <span class="input-group-text bg-transparent border-right-0">
+                                                <i class="mdi mdi-account-outline text-primary"></i>
+                                            </span>
+                                        </div>
+                                        <input asp-for="Email" type="text" class="form-control form-control-lg border-left-0" placeholder="E-posta Adresi">
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password">Şifre</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend bg-transparent">
+                                            <span class="input-group-text bg-transparent border-right-0">
+                                                <i class="mdi mdi-lock-outline text-primary"></i>
+                                            </span>
+                                        </div>
+                                        <input asp-for="Password" type="password" class="form-control form-control-lg border-left-0" placeholder="Şifre">
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="my-2 d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <label asp-for="RememberMe" class="form-check-label text-muted">
+                                            <input asp-for="RememberMe" type="checkbox" class="form-check-input">
+                                            Beni Hatırla
+                                        </label>
+                                    </div>                                   
+                                </div>
+                                <div class="my-3">
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">Giriş Yap</button>
+                                </div>
+                               
+                                <div class="text-center mt-4 font-weight-light">
+                                    Hesabınız Yok Mu? <a asp-area="" asp-controller="Home" asp-action="Create" class="text-primary">Kayıt Ol</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 login-half-bg d-flex flex-row">
+                        <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2018  All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+</body>
+@await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
+</html>
 
-    <div class="text-danger mt-2" asp-validation-summary="ModelOnly"></div>
-    @* <input type="hidden" asp-for="ReturnUrl" /> *@
-    <div class="mb-3">
-        <label asp-for="Email">E-posta Adresi:</label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Password">Şifre </label>
-        <input type="password" asp-for="Password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-check">
-        <input asp-for="RememberMe" class="form-check-input" type="checkbox">
-        <label class="form-check-label" for="RememberMe">
-            Beni Hatırla
-        </label>
-    </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Kaydet</button>
-    </div>
 
-</form> 

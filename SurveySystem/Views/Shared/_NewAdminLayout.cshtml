@@ -12,12 +12,17 @@
         @await Html.PartialAsync("/Views/Shared/_NavHeaderPartial.cshtml")        
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
+            <!-- partial:~/webtheme/Triangle/partials/_sidebar.html -->
             @await Html.PartialAsync("/Views/Shared/_MenuPartial.cshtml")
+            <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
                     @RenderBody()
                 </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:~/webtheme/Triangle/partials/_footer.html -->
                 @await Html.PartialAsync("/Views/Shared/_FooterPartial.cshtml")
+                <!-- partial -->
             </div>
             <!-- main-panel ends -->
         </div>
