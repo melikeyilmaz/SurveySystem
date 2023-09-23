@@ -36,7 +36,7 @@ namespace SurveySystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult SignUp()
         {
             var model = new UserCreateModel();
             return View(model);
@@ -81,7 +81,7 @@ namespace SurveySystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserCreateModel model)
+        public async Task<IActionResult> SignUp(UserCreateModel model)
         {
             if (ModelState.IsValid)
             {

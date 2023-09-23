@@ -56,7 +56,7 @@
                                 </div>
                                
                                 <div class="text-center mt-4 font-weight-light">
-                                    Hesabınız Yok Mu? <a asp-area="" asp-controller="Home" asp-action="Create" class="text-primary">Kayıt Ol</a>
+                                    Hesabınız Yok Mu? <a asp-area="" asp-controller="Home" asp-action="SignUp" class="text-primary">Kayıt Ol</a>
                                 </div>
                             </form>
                         </div>
@@ -65,13 +65,11 @@
                         <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2018  All rights reserved.</p>
                     </div>
                 </div>
-            </div>
-            <!-- content-wrapper ends -->
+            </div>            
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
+    @await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
 </body>
-@await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
 </html>
 
 
