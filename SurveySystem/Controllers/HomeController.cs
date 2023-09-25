@@ -110,7 +110,7 @@ namespace SurveySystem.Controllers
                     }
 
                     await _userManager.AddToRoleAsync(user, "Member");
-                    return RedirectToAction("Index");
+                    return RedirectToAction("SignIn","Home");
                 }
 
                 foreach (var error in identityResult.Errors)

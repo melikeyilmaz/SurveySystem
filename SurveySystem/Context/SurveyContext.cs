@@ -15,7 +15,16 @@ namespace SurveySystem.Context
 
         public DbSet<Question> Questions { get; set; }
 
-      
-    
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Question>()
+                .HasOne(q => q.User)
+                .WithMany(u => u.Questions)
+                .HasForeignKey(q => q.UserId);
+        }
+
+
     }
 }

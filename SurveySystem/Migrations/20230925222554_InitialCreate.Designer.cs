@@ -12,8 +12,8 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    [Migration("20230923221712_deneme2")]
-    partial class deneme2
+    [Migration("20230925222554_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,6 +248,9 @@ namespace SurveySystem.Migrations
                     b.Property<int>("CorrectOption")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Option1")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -272,7 +275,12 @@ namespace SurveySystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Questions");
                 });
@@ -326,6 +334,20 @@ namespace SurveySystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SurveySystem.Models.Question", b =>
+                {
+                    b.HasOne("SurveySystem.Entities.AppUser", "User")
+                        .WithMany("Questions")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SurveySystem.Entities.AppUser", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

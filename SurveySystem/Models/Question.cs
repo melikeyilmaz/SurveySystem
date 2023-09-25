@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SurveySystem.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models
 {
@@ -28,6 +30,10 @@ namespace SurveySystem.Models
         [RegularExpression("[1-5]", ErrorMessage = "Doğru cevap 1 ile 5 arasında bir değer olmalıdır.")]
         public int CorrectOption { get; set; }
         public bool IsApproved { get; set; }
+        public int? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public AppUser? User { get; set; }
 
     }
 }

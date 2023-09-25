@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SurveySystem.Models;
 
 namespace SurveySystem.Entities
 {
@@ -6,5 +7,6 @@ namespace SurveySystem.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public ICollection<Question> Questions { get; set; }
     }
 }

@@ -37,18 +37,55 @@ namespace SurveySystem.Controllers
         //    return View(model);
         //}
 
+        //[HttpPost]
+        //[Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
+        //public IActionResult AddQuestion(Question model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Kullanıcı oturum açmış mı kontrol edin
+        //        if (User.Identity.IsAuthenticated)
+        //        {
+        //            // Kullanıcı kimliğini alın
+        //            var userId = _userManager.GetUserId(User);
+
+        //            // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
+        //            if (User.IsInRole("Admin"))
+        //            {
+        //                model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle.
+        //            }
+        //            else
+        //            {
+        //                // Üye eklediyse, onay bekleme durumunda bırak.
+        //                model.IsApproved = false;
+        //            }
+
+        //            // Soru ekleyen kullanıcının kimliğini modeldeki UserId alanına atamamıza gerek yok.
+        //            // Kimlik doğrulama işlemleri otomatik olarak kullanıcı kimliğini sağlar.
+
+        //            _context.Add(model);
+        //            _context.SaveChanges();
+        //            return RedirectToAction("QuestionList");
+        //        }
+        //        else
+        //        {
+        //            // Kullanıcı oturum açmamışsa, oturum açma sayfasına yönlendir.
+        //            return RedirectToAction("SignIn", "Home");
+        //        }
+        //    }
+        //    return View(model);
+        //}
+
         [HttpPost]
         [Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
         public IActionResult AddQuestion(Question model)
         {
             if (ModelState.IsValid)
             {
-                // Kullanıcı oturum açmış mı kontrol edin
+                // Kullanıcı oturum açmış mı kontrol et.
                 if (User.Identity.IsAuthenticated)
                 {
-                    // Kullanıcı kimliğini alın
                     var userId = _userManager.GetUserId(User);
-
                     // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
                     if (User.IsInRole("Admin"))
                     {
@@ -59,9 +96,8 @@ namespace SurveySystem.Controllers
                         // Üye eklediyse, onay bekleme durumunda bırak.
                         model.IsApproved = false;
                     }
-
-                    // Soru ekleyen kullanıcının kimliğini modeldeki UserId alanına atamamıza gerek yok.
-                    // Kimlik doğrulama işlemleri otomatik olarak kullanıcı kimliğini sağlar.
+                   
+                    model.UserId = int.Parse(userId);
 
                     _context.Add(model);
                     _context.SaveChanges();
@@ -73,10 +109,21 @@ namespace SurveySystem.Controllers
                     return RedirectToAction("SignIn", "Home");
                 }
             }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    // Hata mesajlarını görüntüle
+                    var errorMessage = error.ErrorMessage;
+                    // Hangi özellikte hata olduğunu görmek için error.PropertyName'i kullanabilirsiniz.
+                }
+
+                // Sorunları düzeltmek için geri dönüş yapmadan önce bu hataları ele alın.
+            }
+
             return View(model);
         }
-
-
 
         [Authorize(Roles = "Admin, Member")] // Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
