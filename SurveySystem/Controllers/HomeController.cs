@@ -198,7 +198,7 @@ namespace SurveySystem.Controllers
         public async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("SignIn","Home");
         }
 
         public IActionResult Privacy()

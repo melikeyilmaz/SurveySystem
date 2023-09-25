@@ -49,14 +49,14 @@ namespace SurveySystem.Controllers
                     // Kullanıcı kimliğini alın
                     var userId = _userManager.GetUserId(User);
 
-                    // Kullanıcı admin ise, eklenen soruyu otomatik olarak onaylayın
+                    // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
                     if (User.IsInRole("Admin"))
                     {
-                        model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle
+                        model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle.
                     }
                     else
                     {
-                        // Üye eklediyse, onay bekleme durumunda bırakın.
+                        // Üye eklediyse, onay bekleme durumunda bırak.
                         model.IsApproved = false;
                     }
 
@@ -69,10 +69,8 @@ namespace SurveySystem.Controllers
                 }
                 else
                 {
-                    // Kullanıcı oturum açmamışsa, işlemi reddedin veya oturum açma sayfasına yönlendirin.
-                    // Örnek olarak aşağıdaki satırı kullanabilirsiniz:
-                    // return RedirectToAction("SignIn", "Home");
-                    return RedirectToAction("AccessDenied", "Home");
+                    // Kullanıcı oturum açmamışsa, oturum açma sayfasına yönlendir.
+                    return RedirectToAction("SignIn", "Home");
                 }
             }
             return View(model);
@@ -80,7 +78,7 @@ namespace SurveySystem.Controllers
 
 
 
-        // Soruların bir listesini görüntülemek için kullanılır.
+        [Authorize(Roles = "Admin, Member")] // Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
         public IActionResult QuestionList()
         {
@@ -89,42 +87,7 @@ namespace SurveySystem.Controllers
                         .ToList();
 
             return View(questions);
-        }
-
-        //[HttpGet] //Bu eylem, silinecek soruyu bulmak için kullanılır. 
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var question = _context.Questions.Find(id);
-        //    if (question == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(question);
-        //}
-
-
-        //[HttpPost, ActionName("Delete")] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır. 
-        //[ValidateAntiForgeryToken]
-        //public IActionResult DeleteQuestion(int id)
-        //{
-        //    var question = _context.Questions.Find(id);
-        //    if (question == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Questions.Remove(question);
-        //    _context.SaveChanges();
-
-        //    return RedirectToAction("QuestionList");
-        //}
-
+        }    
 
 
         [HttpPost] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır.       
