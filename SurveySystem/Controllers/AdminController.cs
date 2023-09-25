@@ -81,12 +81,13 @@ namespace SurveySystem.Controllers
 
 
         // Soruların bir listesini görüntülemek için kullanılır.
+        [HttpGet]
         public IActionResult QuestionList()
-        {           
+        {
             var questions = _context.Questions
                         .OrderByDescending(e => e.Id)
                         .ToList();
-                       
+
             return View(questions);
         }
 
@@ -149,6 +150,53 @@ namespace SurveySystem.Controllers
                 return Json(new { isSuccess = false, errorMessage = ex.Message });
             }
         }
+
+        [Authorize(Roles = "Admin")] // Onay Bekleyen Soruların bir listesini görüntülemek için kullanılır.
+        [HttpGet]        
+        public IActionResult UnApprovedQuestions()
+        {
+            var unapprovedQuestions = _context.Questions
+                                    .Where(q => !q.IsApproved) // Sadece onaylanmamış soruları seç
+                                    .OrderByDescending(q => q.Id)
+                                    .ToList();
+
+            return View(unapprovedQuestions);
+        }
+
+        [Authorize(Roles = "Admin")] // Sadece Admin rolüne sahip kullanıcılar bu işlemi yapabilir
+        [HttpPost]
+        public IActionResult ProcessQuestion(int id, bool approve)
+        {
+            try
+            {
+                var question = _context.Questions.Find(id);
+
+                if (question == null)
+                {
+                    return Json(new { success = false, message = "Soru bulunamadı." });
+                }
+
+                if (approve)
+                {
+                    // Soruyu onayla
+                    question.IsApproved = true;
+                    _context.SaveChanges();
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    // Soruyu reddet
+                    _context.Questions.Remove(question);
+                    _context.SaveChanges();
+                    return Json(new { success = true });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
 
 
     }
