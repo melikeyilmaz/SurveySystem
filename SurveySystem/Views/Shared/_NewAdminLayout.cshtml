@@ -1,4 +1,60 @@
-﻿@{
+﻿@* @{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("/Views/Shared/_HeadPartial.cshtml")
+@await RenderSectionAsync("Styles", required: false)
+<body>
+    <div class="container-scroller">
+        <!-- partial:~/webtheme/Triangle/partials/_navbar.html -->
+        @await Html.PartialAsync("/Views/Shared/_NavHeaderPartial.cshtml")
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:~/webtheme/Triangle/partials/_sidebar.html -->
+            @await Html.PartialAsync("/Views/Shared/_MenuPartial.cshtml")
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:~/webtheme/Triangle/partials/_footer.html -->
+                @await Html.PartialAsync("/Views/Shared/_FooterPartial.cshtml")
+                <!-- partial -->
+                <!-- Bootstrap Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modal Başlık</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Modal içeriği buraya gelecek.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bootstrap Modal Sonu -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    @await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+ *@
+
+@{
     Layout = null;
 }
 
@@ -29,5 +85,8 @@
         <!-- page-body-wrapper ends -->
     </div>
     @await Html.PartialAsync("/Views/Shared/_ScriptPartial.cshtml")
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+

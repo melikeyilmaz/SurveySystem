@@ -106,9 +106,22 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Admin}/{action=DeleteQuestion}/{id?}");
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Admin}/{action=DeleteQuestion}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "delete",
+//    pattern: "Admin/DeleteQuestion/{id}", // pattern deðerini düzeltin
+//    defaults: new { controller = "Admin", action = "DeleteQuestion" }
+//);
+
+
+    app.MapControllerRoute(
+        name: "delete",
+        pattern: "Admin/DeleteQuestion/{id}",
+        defaults: new { controller = "Admin", action = "DeleteQuestion" });
+
 
 //app.UseEndpoints(endpoints =>
 //{
@@ -117,7 +130,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=SignIn}/{id?}");
 
 //app.MapControllerRoute(
 //    name: "home",

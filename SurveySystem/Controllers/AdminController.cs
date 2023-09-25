@@ -34,10 +34,9 @@ namespace SurveySystem.Controllers
             return View(model);
         }
 
-
+        // Soruların bir listesini görüntülemek için kullanılır.
         public IActionResult QuestionList()
-        {
-            // Soruların bir listesini görüntülemek için kullanılır.
+        {           
             var questions = _context.Questions
                         .OrderByDescending(e => e.Id)
                         .ToList();
@@ -45,38 +44,66 @@ namespace SurveySystem.Controllers
             return View(questions);
         }
 
-        [HttpGet] //Bu eylem, silinecek soruyu bulmak için kullanılır. 
-        public IActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //[HttpGet] //Bu eylem, silinecek soruyu bulmak için kullanılır. 
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var question = _context.Questions.Find(id);
-            if (question == null)
-            {
-                return NotFound();
-            }
+        //    var question = _context.Questions.Find(id);
+        //    if (question == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(question);
-        }
+        //    return View(question);
+        //}
 
-       
-        [HttpPost, ActionName("Delete")] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır. 
-        [ValidateAntiForgeryToken]
+
+        //[HttpPost, ActionName("Delete")] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır. 
+        //[ValidateAntiForgeryToken]
+        //public IActionResult DeleteQuestion(int id)
+        //{
+        //    var question = _context.Questions.Find(id);
+        //    if (question == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Questions.Remove(question);
+        //    _context.SaveChanges();
+
+        //    return RedirectToAction("QuestionList");
+        //}
+
+
+
+        [HttpPost] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır.       
         public IActionResult DeleteQuestion(int id)
         {
-            var question = _context.Questions.Find(id);
-            if (question == null)
+            try
             {
-                return NotFound();
+                var question = _context.Questions.Find(id);
+                if (question == null)
+                {
+                    return Json(new { isSuccess = false, errorMessage = "Soru bulunamadı." });
+                }
+
+                _context.Questions.Remove(question);
+                _context.SaveChanges();
+
+                return Json(new { isSuccess = true, message = "Soru başarıyla silindi." });
+
             }
-
-            _context.Questions.Remove(question);
-            _context.SaveChanges();
-
-            return RedirectToAction("QuestionList"); 
+            catch (Exception ex)
+            {
+                // Hata durumunu loglayabilir veya inceleyebilirsiniz
+                return Json(new { isSuccess = false, errorMessage = ex.Message });
+            }
         }
+
+
     }
 }

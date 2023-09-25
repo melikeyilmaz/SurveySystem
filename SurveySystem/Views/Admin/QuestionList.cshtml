@@ -4,6 +4,44 @@
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
 }
 
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".delete-button").click(function () {
+                var id = $(this).data("id");
+                $('#deleteModal').modal('show');
+            });
+
+
+            $('#confirmDeleteButton').off("click").on("click", function () {
+                // Silme işlemi için AJAX çağrısı burada yapılır
+                var id = $(".delete-button").data("id"); // Silme işlemi için id'yi yeniden al
+
+                $.ajax({
+                    url: '/Admin/DeleteQuestion/' + id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.isSuccess) {
+                            toastr.success("Silme işlemi başarılı!");
+                            $('#deleteModal').modal('hide');
+                            window.location.href = '/Admin/QuestionList';
+                        } else {
+                            toastr.error("Silme işlemi başarısız oldu. Hata: " + data.errorMessage);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        toastr.error('İstek başarısız. Hata: ' + error);
+                    }
+                });
+            });      
+        });
+    </script>
+
+}
+
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
@@ -59,10 +97,23 @@
                                     @Html.DisplayFor(modelItem => item.Option5)
                                 </td>
                                 <td>
-                                    <form method="get" asp-controller="Admin" asp-action="DeleteQuestion">
+                                   @*  <form method="get" asp-controller="Admin" asp-action="Delete">
                                         <input type="hidden" name="id" value="@item.Id" />
                                         <button class="btn btn-danger" type="submit">Sil</button>
+                                    </form> *@
+
+                                    @* <form method="get" asp-controller="Admin" asp-action="Delete">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button class="btn btn-danger delete-button" data-toggle="modal" data-target="#deleteModal" data-id="@item.Id">
+                                            Sil
+                                        </button>
                                     </form>
+                                    *@
+                                   
+                                    <button class="btn btn-danger delete-button" data-id="@item.Id">
+                                        Sil
+                                    </button>
+                                  
                                 </td>
                             </tr>
                         }
@@ -71,4 +122,28 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Öğe Silme</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Silme işlemi hakkında bir uyarı metni veya içerik buraya gelecek -->
+                    <p>Silmek istediğinize emin misiniz?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
