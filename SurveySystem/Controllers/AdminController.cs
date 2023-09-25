@@ -207,7 +207,21 @@ namespace SurveySystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Member")]
+        [HttpGet]
+        public IActionResult MyQuestionList()
+        {
+            // Kullanıcının kimliğini al.
+            var userId = _userManager.GetUserId(User);
 
+            // Kullanıcının eklediği soruları filtreleyerek al.
+            var userQuestions = _context.Questions
+                .Where(q => q.UserId == int.Parse(userId))
+                .OrderByDescending(q => q.Id)
+                .ToList();
+
+            return View(userQuestions);
+        }
 
     }
 }
