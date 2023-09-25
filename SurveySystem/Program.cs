@@ -39,6 +39,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddDbContext<SurveyContext>(options =>
 options.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=SurveySystem;Integrated Security=True"));
 
+
 var app = builder.Build();
 
 
@@ -63,7 +64,7 @@ using (var scope = app.Services.CreateScope())
         {
             UserName = adminEmail,
             Email = adminEmail,
-            FirstName = "Admin", 
+            FirstName = "Admin",
             LastName = "Admin"
         };
 
@@ -106,21 +107,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Admin}/{action=DeleteQuestion}/{id?}");
 
-//app.MapControllerRoute(
-//    name: "delete",
-//    pattern: "Admin/DeleteQuestion/{id}", // pattern deðerini düzeltin
-//    defaults: new { controller = "Admin", action = "DeleteQuestion" }
-//);
-
-
-    app.MapControllerRoute(
-        name: "delete",
-        pattern: "Admin/DeleteQuestion/{id}",
-        defaults: new { controller = "Admin", action = "DeleteQuestion" });
+app.MapControllerRoute(
+    name: "delete",
+    pattern: "Admin/DeleteQuestion/{id}",
+    defaults: new { controller = "Admin", action = "DeleteQuestion" });
 
 
 //app.UseEndpoints(endpoints =>
@@ -132,10 +123,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=SignIn}/{id?}");
 
-//app.MapControllerRoute(
-//    name: "home",
-//    pattern: "Home/{action=Create}",
-//    defaults: new { controller = "Home", action = "Create" });
+
 
 
 app.Run();

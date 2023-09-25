@@ -155,7 +155,7 @@ namespace SurveySystem.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Panel");
+                        return RedirectToAction("AddQuestion", "Admin");
                     }
                 }
                 ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı");

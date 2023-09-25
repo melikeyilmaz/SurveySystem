@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SurveySystem.Context;
+using SurveySystem.Entities;
 using SurveySystem.Models;
 
 namespace SurveySystem.Controllers
@@ -8,31 +11,74 @@ namespace SurveySystem.Controllers
     {
         // DbContext'i tanımla.
         private readonly SurveyContext _context;
-
-        public AdminController(SurveyContext context)
+        private readonly UserManager<AppUser> _userManager;
+        public AdminController(SurveyContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
         //Soru ekleme formunu göstermek için bir GET işlemi
         [HttpGet]
         public IActionResult AddQuestion()
         {
             return View();
-        }        
+        }
 
         // Soru ekleme formunu kullanarak bir POST işlemi
+        //[HttpPost]
+        //public IActionResult AddQuestion(Question model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(model);
+        //        _context.SaveChanges();
+        //        return RedirectToAction("QuestionList");
+        //    }
+        //    return View(model);
+        //}
+
         [HttpPost]
+        [Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
         public IActionResult AddQuestion(Question model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(model);
-                _context.SaveChanges();
-                return RedirectToAction("QuestionList");
+                // Kullanıcı oturum açmış mı kontrol edin
+                if (User.Identity.IsAuthenticated)
+                {
+                    // Kullanıcı kimliğini alın
+                    var userId = _userManager.GetUserId(User);
+
+                    // Kullanıcı admin ise, eklenen soruyu otomatik olarak onaylayın
+                    if (User.IsInRole("Admin"))
+                    {
+                        model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle
+                    }
+                    else
+                    {
+                        // Üye eklediyse, onay bekleme durumunda bırakın.
+                        model.IsApproved = false;
+                    }
+
+                    // Soru ekleyen kullanıcının kimliğini modeldeki UserId alanına atamamıza gerek yok.
+                    // Kimlik doğrulama işlemleri otomatik olarak kullanıcı kimliğini sağlar.
+
+                    _context.Add(model);
+                    _context.SaveChanges();
+                    return RedirectToAction("QuestionList");
+                }
+                else
+                {
+                    // Kullanıcı oturum açmamışsa, işlemi reddedin veya oturum açma sayfasına yönlendirin.
+                    // Örnek olarak aşağıdaki satırı kullanabilirsiniz:
+                    // return RedirectToAction("SignIn", "Home");
+                    return RedirectToAction("AccessDenied", "Home");
+                }
             }
             return View(model);
         }
+
+
 
         // Soruların bir listesini görüntülemek için kullanılır.
         public IActionResult QuestionList()

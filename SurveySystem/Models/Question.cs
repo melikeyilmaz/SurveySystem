@@ -27,6 +27,7 @@ namespace SurveySystem.Models
         [Required(ErrorMessage = "Doğru cevap gereklidir.")]
         [RegularExpression("[1-5]", ErrorMessage = "Doğru cevap 1 ile 5 arasında bir değer olmalıdır.")]
         public int CorrectOption { get; set; }
+        public bool IsApproved { get; set; }
 
     }
 }
