@@ -42,5 +42,8 @@ namespace SurveySystem.Models
         [ForeignKey("UserId")]
         public AppUser? User { get; set; }
 
+        // Sorunun hangi anketlere ait olduğunu göstermek için anketlerin listesi
+        public List<Surveys>? Surveys { get; set; }
+
     }
 }
