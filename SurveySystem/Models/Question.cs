@@ -4,6 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models
 {
+    // Enum tanımlaması
+    public enum ApprovalStatus
+    {
+        OnayBekliyor,
+        Onaylandi,
+        Reddedildi        
+    }
     public class Question
     { 
         public int Id { get; set; }
@@ -29,7 +36,7 @@ namespace SurveySystem.Models
         [Required(ErrorMessage = "Doğru cevap gereklidir.")]
         [RegularExpression("[1-5]", ErrorMessage = "Doğru cevap 1 ile 5 arasında bir değer olmalıdır.")]
         public int CorrectOption { get; set; }
-        public bool IsApproved { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; }
         public int? UserId { get; set; }
 
         [ForeignKey("UserId")]

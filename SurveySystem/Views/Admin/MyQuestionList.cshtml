@@ -58,13 +58,17 @@
                                     @Html.DisplayFor(modelItem => item.Option5)
                                 </td>
                                 <td>
-                                    @if (item.IsApproved)
+                                    @if (item.ApprovalStatus == ApprovalStatus.Onaylandi)
                                     {
-                                        <span class="text-success">Onaylandı</span>
+                                        <label class="badge badge-success">Onaylandı</label>                                        
                                     }
-                                    else
+                                    else if (item.ApprovalStatus == ApprovalStatus.Reddedildi)
                                     {
-                                        <span class="text-danger">Reddedildi</span>
+                                        <label class="badge badge-danger">Reddedildi</label>
+                                    }
+                                    else if (item.ApprovalStatus == ApprovalStatus.OnayBekliyor)
+                                    {
+                                        <label class="badge badge-warning">Onay Bekliyor</label>                                        
                                     }
                                 </td>
                             </tr>

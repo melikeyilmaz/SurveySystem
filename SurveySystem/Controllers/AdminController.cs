@@ -89,12 +89,12 @@ namespace SurveySystem.Controllers
                     // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
                     if (User.IsInRole("Admin"))
                     {
-                        model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle.
+                        model.ApprovalStatus = ApprovalStatus.Onaylandi; // Admin eklediği için onaylandı olarak işaretle.
                     }
                     else
                     {
                         // Üye eklediyse, onay bekleme durumunda bırak.
-                        model.IsApproved = false;
+                        model.ApprovalStatus = ApprovalStatus.OnayBekliyor;
                     }
                    
                     model.UserId = int.Parse(userId);
@@ -162,13 +162,13 @@ namespace SurveySystem.Controllers
         }
 
         [Authorize(Roles = "Admin")] // Onay Bekleyen Soruların bir listesini görüntülemek için kullanılır.
-        [HttpGet]        
+        [HttpGet]
         public IActionResult UnApprovedQuestions()
         {
             var unapprovedQuestions = _context.Questions
-                                    .Where(q => !q.IsApproved) // Sadece onaylanmamış soruları seç
-                                    .OrderByDescending(q => q.Id)
-                                    .ToList();
+                        .Where(q => q.ApprovalStatus == ApprovalStatus.OnayBekliyor) // Onay bekleyen soruları seç
+                        .OrderByDescending(q => q.Id)
+                        .ToList();
 
             return View(unapprovedQuestions);
         }
@@ -188,17 +188,17 @@ namespace SurveySystem.Controllers
 
                 if (approve)
                 {
-                    // Soruyu onayla
-                    question.IsApproved = true;
+                    // Soruyu onayla                   
+                    question.ApprovalStatus = ApprovalStatus.Onaylandi; // Onaylandı durumunu ayarla
                     _context.SaveChanges();
-                    return Json(new { success = true });
+                    return Json(new { success = true, status = "Onaylandı" });
                 }
                 else
                 {
                     // Soruyu reddet
-                    _context.Questions.Remove(question);
+                    question.ApprovalStatus = ApprovalStatus.Reddedildi; // Reddedildi durumunu ayarla
                     _context.SaveChanges();
-                    return Json(new { success = true });
+                    return Json(new { success = true, status = "Reddedildi" });
                 }
             }
             catch (Exception ex)
@@ -206,6 +206,7 @@ namespace SurveySystem.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         [Authorize(Roles = "Member")]
         [HttpGet]
