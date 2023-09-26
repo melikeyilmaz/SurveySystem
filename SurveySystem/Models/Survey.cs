@@ -3,15 +3,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SurveySystem.Models
 {
-    public class Surveys
+    public class Survey
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "İsminizi giriniz.")]
-        public string UserName { get; set; }
+        [Required(ErrorMessage = "Adınızı giriniz.")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Soyadınızı giriniz.")]
+        public string LastName { get; set; }
 
         // Anketin içerdiği soruların listesi
-        public List<Question>? Questions { get; set; }
+        public List<Question>? Questions { get; set; } 
 
         // Anketi oluşturan kullanıcının kimliği
         public int UserId { get; set; }

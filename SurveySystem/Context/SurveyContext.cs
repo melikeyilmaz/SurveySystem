@@ -14,6 +14,7 @@ namespace SurveySystem.Context
         }
 
         public DbSet<Question> Questions { get; set; }
+        public DbSet<Survey> Surveys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

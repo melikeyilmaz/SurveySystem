@@ -4,6 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models
 {
+    //public enum ApprovalStatus
+    //{
+    //    [Display(Name = "Onay Bekliyor")]
+    //    PendingApproval,
+
+    //    [Display(Name = "Onaylandı")]
+    //    Approved,
+
+    //    [Display(Name = "Reddedildi")]
+    //    Rejected
+    //}
+
     // Enum tanımlaması
     public enum ApprovalStatus
     {
@@ -43,7 +55,7 @@ namespace SurveySystem.Models
         public AppUser? User { get; set; }
 
         // Sorunun hangi anketlere ait olduğunu göstermek için anketlerin listesi
-        public List<Surveys>? Surveys { get; set; }
+        public List<Survey>? Surveys { get; set; }
 
     }
 }
