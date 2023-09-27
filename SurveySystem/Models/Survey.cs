@@ -14,15 +14,21 @@ namespace SurveySystem.Models
         public string LastName { get; set; }
 
         // Anketin içerdiği soruların listesi
-        public List<Question>? Questions { get; set; } 
+        public List<Question>? Questions { get; set; }
 
-        // Anketi oluşturan kullanıcının kimliği
-        public int UserId { get; set; }
+        //public int QuestionId { get; set; }
+
+        //// Anketi oluşturan kullanıcının kimliği
+        //public int UserId { get; set; }
+
 
         // En fazla kaç kişiye gönderilebileceği
         public int MaxParticipants { get; set; }
 
         // İlişkiyi kurmak için kullanılacak User modeli
         public AppUser User { get; set; }
+
+        // Anketin doğru cevapları
+        public List<CorrectAnswer> CorrectAnswers { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SurveySystem.Entities;
+using SurveySystem.Migrations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -45,9 +46,9 @@ namespace SurveySystem.Models
         [Required(ErrorMessage = "5. Seçenek gereklidir.")]
         public string Option5 { get; set; }
 
-        [Required(ErrorMessage = "Doğru cevap gereklidir.")]
-        [RegularExpression("[1-5]", ErrorMessage = "Doğru cevap 1 ile 5 arasında bir değer olmalıdır.")]
-        public int CorrectOption { get; set; }
+        //[Required(ErrorMessage = "Doğru cevap gereklidir.")]
+        //[RegularExpression("[1-5]", ErrorMessage = "Doğru cevap 1 ile 5 arasında bir değer olmalıdır.")]
+        //public int CorrectOption { get; set; }
         public ApprovalStatus ApprovalStatus { get; set; }
         public int? UserId { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿@model SurveySystem.Models.Survey
-@* @model List<Question> *@
 @{
     ViewData["Title"] = "NonMemberSurvey";
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
@@ -10,17 +9,36 @@
             font-size: 14px;
             padding: 5px 10px;
         }
+
+        .toast-error {
+            background-color: brown;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: darkorange;
+            color: white;
+        }
+
+        .toast-success {
+            background-color: darkgreen;
+            color: white;
+        }
     </style>
 }
-
-
 @section Scripts{
     <script type="text/javascript">
         var currentQuestionIndex = 0;
+
+        var surveyData = {
+            FirstName: "",
+            LastName: "",
+            Questions: []
+        };
+
         $(document).ready(function () {
             // Sayfa yüklendiğinde ilk soruyu göster
             showQuestion(currentQuestionIndex);
-            //$(".card:gt(0)").hide();
 
             $("#surveyForm").submit(function (event) {
                 var firstName = $("#FirstName").val().trim();
@@ -32,56 +50,58 @@
                 }
             });
 
-            // $("#surveyForm").submit(function (event) {
-            //     // Formun normal submit işlemini engelliyoruz
-            //     event.preventDefault();
+            $(".btn-select").click(function () {
+                // Seçilen sorunun kimlik numarasını ve doğru cevap seçeneğini al
+                var questionIndex = currentQuestionIndex;
 
-            //     // Form verilerini alıyoruz
-            //     var formData = {
-            //         FirstName: $("#FirstName").val(),
-            //         LastName: $("#LastName").val(),
-            //         SelectedQuestions: [],
-            //         CorrectAnswers: []
-            //     };
+                // Checkbox'ın seçili olup olmadığını kontrol et
+                if ($("#selectQuestion_" + (questionIndex + 1)).is(":checked")) {
+                    var questionId = $("#questionId_" + (questionIndex + 1)).val(); // Soru kimlik numarasını hidden alanından al
+                    var correctOptionId = $("input[name='Questions[" + questionIndex + "].CorrectOption']:checked").val();
 
-            //     // Seçilen soruları ve doğru cevapları formData'ya ekliyoruz
-            //     $("input[type=checkbox]:checked").each(function () {
-            //         formData.SelectedQuestions.push($(this).attr("data-question-id"));
-            //         var radioName = "CorrectOption_" + $(this).attr("data-question-id");
-            //         formData.CorrectAnswers.push($("input[name='" + radioName + "']:checked").val());
-            //     });
+                    // Verileri surveyData nesnesine ekle
+                    surveyData.Questions.push({
+                        QuestionId: parseInt(questionId),
+                        CorrectOption: parseInt(correctOptionId)
+                    });
+                } else {
+                    // Checkbox seçili değilse uyarı ver
+                    toastr.warning("Lütfen soru seçiniz!");
+                }
 
-            //     // Ajax isteği ile form verilerini gönderiyoruz
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "/Surveys/CreateSurvey", // Endpoint'i kendi projenize göre ayarlayın
-            //         data: JSON.stringify(formData),
-            //         contentType: "application/json",
-            //         success: function (response) {
-            //             // Başarılı yanıt geldiğinde işlem yapabilirsiniz
-            //             console.log("Başarılı: " + response);
-            //         },
-            //         error: function (error) {
-            //             // Hata durumunda işlem yapabilirsiniz
-            //             console.log("Hata: " + error);
-            //         }
-            //     });
-            // });
+                // // İleri git
+                // navigate(1);
+            });
 
+
+            $(".btnsave").click(function () {
+                // Ad ve soyadı al
+                surveyData.FirstName = $("#FirstName").val();
+                surveyData.LastName = $("#LastName").val();
+
+                // AJAX isteği gönder
+                $.ajax({
+                    url: "/Survey/NonMemberSurvey",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(surveyData),
+                    success: function (response) {
+                        // Başarılı yanıt alındığında işlemleri yapabilirsiniz
+                        // Örneğin, teşekkür sayfasına yönlendirebilirsiniz
+                        window.location.href = "@Url.Action("ThankYou")";
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        alert("Anket gönderimi sırasında bir hata oluştu.");
+                    }
+                });
+
+                event.preventDefault(); // Formun gönderimini engelle
+            });
         });
 
         function showQuestion(index) {
             $(".question").hide();
             $(".question:eq(" + index + ")").show();
-        }
-
-        function addQuestion() {
-            // Soru eklemek için gerekli kod
-            // ...
-        }
-
-        function removeQuestion(button) {
-            $(button).closest(".question").remove();
         }
 
         function navigate(direction) {
@@ -100,75 +120,85 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Oluşturma</h4>
-            <form id="surveyForm" asp-action="NonMemberSurvey" method="post">
-                <!-- Formun POST isteği gönderdiği bir endpoint belirtmelisiniz. -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="FirstName">Ad</label>
-                            <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="LastName">Soyad</label>
-                            <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName" required>
-                        </div>
+            @* <form id="surveyForm" asp-action="NonMemberSurvey" method="post"> *@
+            <!-- Formun POST isteği gönderdiği bir endpoint belirtmelisiniz. -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="FirstName">Ad</label>
+                        <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName" required>
                     </div>
                 </div>
-                <button class="btn btn-success" onclick="addQuestion()">Soru Ekle</button>
-                <!-- Sorular burada görüntülenir -->
-                @for (var i = 0; i < Model.Questions.Count; i++)
-                {
-                    <div class="card mt-3 question">
-                        <div class="card-body">
-
-                            <div class="form-check form-check-success">
-                                <label class="form-check-label font-weight-bold">
-                                    <input type="checkbox" class="form-check-input" checked id="selectQuestion_@(i + 1)" name="Questions[@i].Selected"> @*card-title*@
-                                    Soru @(i + 1)
-                                </label>
-                            </div>                            
-                            
-                            <div class="form-group">
-                                <label for="question_@(i + 1)">Soru Metni</label>
-                                <input type="text" class="form-control" id="question_@(i + 1)" name="Questions[@i].QuestionText" required value="@Model.Questions[i].QuestionText">
-                            </div>
-                            <div class="form-group">
-                                <label>Seçenekler</label>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].CorrectOption" value="Option1">
-                                    <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].CorrectOption" value="Option2">
-                                    <label class="form-check-label" for="option2_@(i + 1)">@(Model.Questions[i].Option2)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].CorrectOption" value="Option3">
-                                    <label class="form-check-label" for="option3_@(i + 1)">@(Model.Questions[i].Option3)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].CorrectOption" value="Option4">
-                                    <label class="form-check-label" for="option4_@(i + 1)">@(Model.Questions[i].Option4)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].CorrectOption" value="Option5">
-                                    <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
-                                </div>
-                                <!-- Diğer seçenekler burada -->
-                            </div>
-                            <button class="btn btn-danger" onclick="removeQuestion(this)">Kaldır</button>
-                        </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="LastName">Soyad</label>
+                        <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName" required>
                     </div>
-                }
+                </div>
+            </div>
+            <button class="btn btn-success btn-select" >Soru Ekle</button>
+            <!-- Sorular burada görüntülenir -->
+            @for (var i = 0; i < Model.Questions.Count; i++)
+            {
+                <div class="card mt-3 question">
+                    <div class="card-body">
+                        <!-- Soru kimlik numarasını saklamak için gizli bir alan ekleyin -->
+@*                         <input type="hidden" id="questionId" value="@Model.Questions[i].Id" />
+ *@                        
+ 
+                    @* <input type="hidden" id="questionId_@(i + 1)" value="@Model.Questions[i].Id" /> *@
+                       
 
-                <!-- İleri ve geri düğmeleri ekleyin -->
-                <button class="btn btn-primary mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru</button>
-                <button class="btn btn-primary mt-3" id="nextButton" onclick="navigate(1)">Sonraki Soru</button>
+                        <div class="form-check form-check-success">
+                            <label class="form-check-label font-weight-bold">
+                                <input type="checkbox" class="form-check-input" id="selectQuestion_@(i + 1)" name="Questions[@i].Selected"> @*card-title*@
+                                Soru @(i + 1)
+                            </label>
+                            <input type="hidden" id="questionId_@(i + 1)" name="Questions[@i].QuestionId" value="@Model.Questions[i].Id" />
+                        </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Anketi Oluştur</button>
-            </form>
+
+                        <div class="form-group">
+                            <label for="question_@(i + 1)">Soru Metni</label>
+                            <input type="text" class="form-control" id="question_@(i + 1)" name="Questions[@i].QuestionText" required value="@Model.Questions[i].QuestionText">
+                           @*  <input type="hidden" value="@Model.Questions[i].Id" /> *@
+
+                        </div>
+                        <div class="form-group">
+                            <label>Seçenekler</label>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].CorrectOption" value="1">
+                                <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].CorrectOption" value="2">
+                                <label class="form-check-label" for="option2_@(i + 1)">@(Model.Questions[i].Option2)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].CorrectOption" value="3">
+                                <label class="form-check-label" for="option3_@(i + 1)">@(Model.Questions[i].Option3)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].CorrectOption" value="4">
+                                <label class="form-check-label" for="option4_@(i + 1)">@(Model.Questions[i].Option4)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].CorrectOption" value="5">
+                                <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
+                            </div>
+                            <!-- Diğer seçenekler burada -->
+                        </div>
+                        <button class="btn btn-danger" onclick="removeQuestion(this)">Kaldır</button>
+                    </div>
+                </div>
+            }
+
+            <!-- İleri ve geri düğmeleri ekleyin -->
+            <button class="btn btn-primary mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru</button>
+            <button class="btn btn-primary mt-3" id="nextButton" onclick="navigate(1)">Sonraki Soru</button>
+
+            <button type="submit" class="btn btn-primary mt-3 btnsave">Anketi Oluştur</button>
+            @* </form> *@
         </div>
     </div>
 </div>

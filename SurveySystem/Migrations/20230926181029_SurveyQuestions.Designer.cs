@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurveySystem.Context;
 
@@ -11,9 +12,11 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    partial class SurveyContextModelSnapshot : ModelSnapshot
+    [Migration("20230926181029_SurveyQuestions")]
+    partial class SurveyQuestions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,8 +260,9 @@ namespace SurveySystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CorrectChoiceId")
-                        .HasColumnType("int");
+                    b.Property<string>("AnswerText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
@@ -268,9 +272,7 @@ namespace SurveySystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("SurveyId");
+                    b.HasIndex("SurveyId", "QuestionId");
 
                     b.ToTable("CorrectAnswers");
                 });
@@ -349,6 +351,24 @@ namespace SurveySystem.Migrations
                     b.ToTable("Surveys");
                 });
 
+            modelBuilder.Entity("SurveySystem.Models.SurveyQuestion", b =>
+                {
+                    b.Property<int>("SurveyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("SurveyId", "QuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("SurveyQuestions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("SurveySystem.Entities.AppRole", null)
@@ -417,21 +437,19 @@ namespace SurveySystem.Migrations
 
             modelBuilder.Entity("SurveySystem.Models.CorrectAnswer", b =>
                 {
-                    b.HasOne("SurveySystem.Models.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurveySystem.Models.Survey", "Survey")
+                    b.HasOne("SurveySystem.Models.Survey", null)
                         .WithMany("CorrectAnswers")
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Question");
+                    b.HasOne("SurveySystem.Models.SurveyQuestion", "SurveyQuestion")
+                        .WithMany("CorrectAnswers")
+                        .HasForeignKey("SurveyId", "QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Survey");
+                    b.Navigation("SurveyQuestion");
                 });
 
             modelBuilder.Entity("SurveySystem.Models.Question", b =>
@@ -454,12 +472,43 @@ namespace SurveySystem.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SurveySystem.Models.SurveyQuestion", b =>
+                {
+                    b.HasOne("SurveySystem.Models.Question", "Question")
+                        .WithMany("SurveyQuestions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SurveySystem.Models.Survey", "Survey")
+                        .WithMany("SurveyQuestions")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Survey");
+                });
+
             modelBuilder.Entity("SurveySystem.Entities.AppUser", b =>
                 {
                     b.Navigation("Questions");
                 });
 
+            modelBuilder.Entity("SurveySystem.Models.Question", b =>
+                {
+                    b.Navigation("SurveyQuestions");
+                });
+
             modelBuilder.Entity("SurveySystem.Models.Survey", b =>
+                {
+                    b.Navigation("CorrectAnswers");
+
+                    b.Navigation("SurveyQuestions");
+                });
+
+            modelBuilder.Entity("SurveySystem.Models.SurveyQuestion", b =>
                 {
                     b.Navigation("CorrectAnswers");
                 });
