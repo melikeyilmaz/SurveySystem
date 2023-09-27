@@ -22,6 +22,9 @@ namespace SurveySystem.Models
         // Anketin içerdiği soruların listesi
         public List<Question>? Questions { get; set; }
 
+        // Benzersiz URL'yi saklamak için alan
+        public string? UniqueId { get; set; } 
+
         //[ForeignKey("QuestionId")]
         //public virtual Question Question { get; set; } // Hangi soruya verildiğini izlemek için Question sınıfına referans
     }

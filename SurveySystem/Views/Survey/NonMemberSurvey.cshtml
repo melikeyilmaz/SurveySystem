@@ -58,6 +58,12 @@
                 surveyData.FirstName = $("#FirstName").val();
                 surveyData.LastName = $("#LastName").val();
 
+                // Ad ve soyadı inputlarını kontrol et
+                if (surveyData.FirstName == "" || surveyData.LastName=="") {
+                    toastr.warning("Ad ve Soyad boş bırakılamaz!");
+                    return; // Boş inputlar varsa işlemi durdur
+                }
+
                 // Soru ve cevapları toplamak için bir dizi oluştur
                 var questionResponses = [];
 
@@ -161,13 +167,6 @@
             {
                 <div class="card mt-3 question">
                     <div class="card-body">
-                        <!-- Soru kimlik numarasını saklamak için gizli bir alan ekleyin -->
-                        @*                         <input type="hidden" id="questionId" value="@Model.Questions[i].Id" />
-                    *@
-
-                        @* <input type="hidden" id="questionId_@(i + 1)" value="@Model.Questions[i].Id" /> *@
-
-
                         <div class="form-check form-check-success">
                             <label class="form-check-label font-weight-bold">
                                 <input type="checkbox" class="form-check-input" id="selectQuestion_@(i + 1)" name="Questions[@i].Selected"> @*card-title*@
@@ -175,8 +174,6 @@
                             </label>
                             <input type="hidden" id="questionId_@(i + 1)" name="Questions[@i].QuestionId" value="@Model.Questions[i].Id" />
                         </div>
-
-
                         <div class="form-group">
                             <label for="question_@(i + 1)">Soru Metni</label>
                             <input type="text" class="form-control" id="question_@(i + 1)" name="Questions[@i].QuestionText" value="@Model.Questions[i].QuestionText">
@@ -205,18 +202,21 @@
                                 <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].CorrectOption" value="5">
                                 <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
                             </div>
-                            <!-- Diğer seçenekler burada -->
-                        </div>
-                        @*                         <button class="btn btn-danger" onclick="removeQuestion(this)">Kaldır</button> *@
+                        </div>                        
                     </div>
                 </div>
             }
-
-            <!-- İleri ve geri düğmeleri ekleyin -->
+            <!-- İleri ve geri butonları -->@* 
             <button class="btn btn-primary mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru</button>
-            <button class="btn btn-primary mt-3" id="nextButton" onclick="navigate(1)">Sonraki Soru</button>
+            <button class="btn btn-primary mt-3" id="nextButton" onclick="navigate(1)">Sonraki Soru</button> *@
 
-            <button type="submit" class="btn btn-primary mt-3 btnsurvey">Anketi Oluştur</button>
+            <button type="button" class="btn btn-info btn-icon-text mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru<i class="mdi mdi-arrow-left-bold btn-icon-append"></i></button>
+            <button type="button" class="btn btn-info btn-icon-text mt-3" id="nextButton" onclick="navigate(1)"><i class="mdi mdi-arrow-right-bold btn-icon-prepend"></i>Sonraki Soru</button>
+
+
+            <button type="button" class="btn btn-success btn-icon-text mt-3 btnsurvey"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Oluştur</button>
+
+            @* <button type="submit" class="btn btn-primary mt-3 btnsurvey">Anketi Oluştur</button> *@
             @* </form> *@
         </div>
     </div>

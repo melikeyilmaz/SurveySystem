@@ -78,26 +78,108 @@ namespace SurveySystem.Controllers
                     return Json(new { success = false, errors });
                 }
 
+                // Benzersiz bir kimlik oluştur
+                string uniqueId = Guid.NewGuid().ToString();
+
                 // Survey verisini oluşturun
                 var survey = new Survey
                 {
                     FirstName = surveyData.FirstName,
                     LastName = surveyData.LastName,
                     SubmissionDate = DateTime.Now,
-                    QuestionResponses = surveyData.QuestionResponses // Birden fazla soru ve cevapları buraya ekleyin
+                    QuestionResponses = surveyData.QuestionResponses,
+                    UniqueId = uniqueId // Benzersiz kimliği ankete atayın
                 };
 
                 // Survey verisini veritabanına ekleyin ve kaydedin
                 _context.Surveys.Add(survey);
                 _context.SaveChanges();
 
-                return Json(new { success = true });
+                // Oluşturulan benzersiz URL'yi oluşturun
+                string surveyUrl = Url.Action("NonMemberSurvey", "Survey", new { uniqueId });
+
+                return Json(new { success = true, surveyUrl });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+
+
+        //public IActionResult SaveSurvey(Survey surveyData)
+        //{
+        //    try
+        //    {
+        //        // Verileri doğrulama
+        //        if (!ModelState.IsValid)
+        //        {
+        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        //            return Json(new { success = false, errors });
+        //        }
+
+        //        // Benzersiz bir kimlik oluştur
+        //        string uniqueId = Guid.NewGuid().ToString();
+
+        //        // Survey verisini oluşturun
+        //        var survey = new Survey
+        //        {
+        //            FirstName = surveyData.FirstName,
+        //            LastName = surveyData.LastName,
+        //            SubmissionDate = DateTime.Now,
+        //            QuestionResponses = surveyData.QuestionResponses,
+        //            UniqueId = uniqueId // Benzersiz kimliği ankete atayın
+        //        };
+
+        //        // Survey verisini veritabanına ekleyin ve kaydedin
+        //        _context.Surveys.Add(survey);
+        //        _context.SaveChanges();
+
+        //        // Oluşturulan benzersiz URL'yi oluşturun
+        //        string surveyUrl = Url.Action("SurveyPage", "ControllerName", new { uniqueId });
+
+        //        return Json(new { success = true, surveyUrl });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
+
+
+
+        //public IActionResult SaveSurvey(Survey surveyData)
+        //{
+        //    try
+        //    {
+        //        // Verileri doğrulama
+        //        if (!ModelState.IsValid)
+        //        {
+        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        //            return Json(new { success = false, errors });
+        //        }
+
+        //        // Survey verisini oluşturun
+        //        var survey = new Survey
+        //        {
+        //            FirstName = surveyData.FirstName,
+        //            LastName = surveyData.LastName,
+        //            SubmissionDate = DateTime.Now,
+        //            QuestionResponses = surveyData.QuestionResponses // Birden fazla soru ve cevapları buraya ekleyin
+        //        };
+
+        //        // Survey verisini veritabanına ekleyin ve kaydedin
+        //        _context.Surveys.Add(survey);
+        //        _context.SaveChanges();
+
+        //        return Json(new { success = true });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
 
 
 
