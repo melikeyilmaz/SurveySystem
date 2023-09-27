@@ -14,27 +14,53 @@ namespace SurveySystem.Controllers
             _context = context;
         }
 
-        //public async Task<IActionResult> NonMemberSurvey()
+        //[HttpGet]
+        //public IActionResult NonMemberSurvey()
         //{
-        //    var questions = await _context.Questions.ToListAsync();
+        //    //var questions = _context.Questions.ToList();
 
-        //    var survey = new Surveys
+        //    //return View(questions);
+
+        //    var survey = new Survey
         //    {
-        //        Questions = questions
+        //        Questions = _context.Questions.ToList()
         //    };
 
         //    return View(survey);
         //}
+
         [HttpGet]
         public IActionResult NonMemberSurvey()
         {
-            //var questions = _context.Questions.ToList();
+            var random = new Random();
+            var allQuestions = _context.Questions.ToList();
 
-            //return View(questions);
+            var selectedQuestions = new List<Question>();
+
+            // Eğer soru sayısı 10'dan azsa, tüm soruları seçiyoruz.
+            if (allQuestions.Count <= 10)
+            {
+                selectedQuestions = allQuestions;
+            }
+            else
+            {
+                // Rastgele 10 soru seçiyoruz.
+                while (selectedQuestions.Count < 10)
+                {
+                    var randomIndex = random.Next(0, allQuestions.Count);
+                    var randomQuestion = allQuestions[randomIndex];
+
+                    // Aynı soruyu birden fazla kez seçmemeye dikkat ediyoruz.
+                    if (!selectedQuestions.Contains(randomQuestion))
+                    {
+                        selectedQuestions.Add(randomQuestion);
+                    }
+                }
+            }
 
             var survey = new Survey
             {
-                Questions = _context.Questions.ToList()
+                Questions = selectedQuestions
             };
 
             return View(survey);
