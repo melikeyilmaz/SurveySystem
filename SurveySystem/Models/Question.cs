@@ -1,5 +1,4 @@
 ﻿using SurveySystem.Entities;
-using SurveySystem.Migrations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -56,7 +55,8 @@ namespace SurveySystem.Models
         public AppUser? User { get; set; }
 
         // Sorunun hangi anketlere ait olduğunu göstermek için anketlerin listesi
-        public List<Survey>? Surveys { get; set; }
+        public virtual List<Survey>? Surveys { get; set; }
+        //public List<Survey>? Surveys { get; set; }
 
     }
 }

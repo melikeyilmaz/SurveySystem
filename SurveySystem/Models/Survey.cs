@@ -1,5 +1,6 @@
 ﻿using SurveySystem.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models
 {
@@ -7,28 +8,21 @@ namespace SurveySystem.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Adınızı giriniz.")]
+        [Required(ErrorMessage = "Ad gereklidir.")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Soyadınızı giriniz.")]
+        [Required(ErrorMessage = "Soyad gereklidir.")]
         public string LastName { get; set; }
+
+        public DateTime SubmissionDate { get; set; } // Anketin gönderilme tarihi
+
+        // Birden fazla soru ve seçilen cevapları bu koleksiyon ile tutabilirsiniz.
+        public List<QuestionResponse> QuestionResponses { get; set; }
 
         // Anketin içerdiği soruların listesi
         public List<Question>? Questions { get; set; }
 
-        //public int QuestionId { get; set; }
-
-        //// Anketi oluşturan kullanıcının kimliği
-        //public int UserId { get; set; }
-
-
-        // En fazla kaç kişiye gönderilebileceği
-        public int MaxParticipants { get; set; }
-
-        // İlişkiyi kurmak için kullanılacak User modeli
-        public AppUser User { get; set; }
-
-        // Anketin doğru cevapları
-        public List<CorrectAnswer> CorrectAnswers { get; set; }
+        //[ForeignKey("QuestionId")]
+        //public virtual Question Question { get; set; } // Hangi soruya verildiğini izlemek için Question sınıfına referans
     }
 }

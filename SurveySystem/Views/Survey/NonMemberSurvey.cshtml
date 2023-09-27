@@ -26,6 +26,8 @@
         }
     </style>
 }
+
+
 @section Scripts{
     <script type="text/javascript">
         var currentQuestionIndex = 0;
@@ -33,70 +35,48 @@
         var surveyData = {
             FirstName: "",
             LastName: "",
-            Questions: []
+            QuestionResponses: []
         };
 
         $(document).ready(function () {
             // Sayfa yüklendiğinde ilk soruyu göster
             showQuestion(currentQuestionIndex);
 
-            $("#surveyForm").submit(function (event) {
-                var firstName = $("#FirstName").val().trim();
-                var lastName = $("#LastName").val().trim();
-
-                if (firstName === "" || lastName === "") {
-                    alert("Lütfen adınızı ve soyadınızı eksiksiz olarak girin.");
-                    event.preventDefault(); // Formun gönderimini engelle
-                }
-            });
-
-            $(".btn-select").click(function () {
-                // Seçilen sorunun kimlik numarasını ve doğru cevap seçeneğini al
-                var questionIndex = currentQuestionIndex;
-
-                // Checkbox'ın seçili olup olmadığını kontrol et
-                if ($("#selectQuestion_" + (questionIndex + 1)).is(":checked")) {
-                    var questionId = $("#questionId_" + (questionIndex + 1)).val(); // Soru kimlik numarasını hidden alanından al
-                    var correctOptionId = $("input[name='Questions[" + questionIndex + "].CorrectOption']:checked").val();
-
-                    // Verileri surveyData nesnesine ekle
-                    surveyData.Questions.push({
-                        QuestionId: parseInt(questionId),
-                        CorrectOption: parseInt(correctOptionId)
-                    });
-                } else {
-                    // Checkbox seçili değilse uyarı ver
-                    toastr.warning("Lütfen soru seçiniz!");
-                }
-
-                // // İleri git
-                // navigate(1);
-            });
-
-
-            $(".btnsave").click(function () {
+            $(".btnsurvey").click(function () {
                 // Ad ve soyadı al
                 surveyData.FirstName = $("#FirstName").val();
                 surveyData.LastName = $("#LastName").val();
 
-                // AJAX isteği gönder
-                $.ajax({
-                    url: "/Survey/NonMemberSurvey",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify(surveyData),
-                    success: function (response) {
-                        // Başarılı yanıt alındığında işlemleri yapabilirsiniz
-                        // Örneğin, teşekkür sayfasına yönlendirebilirsiniz
-                        window.location.href = "@Url.Action("ThankYou")";
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        alert("Anket gönderimi sırasında bir hata oluştu.");
+                // Soru ve cevapları toplamak için bir dizi oluştur
+                var questionResponses = [];
+
+                // Tüm soruları döngü ile gez
+                $(".question").each(function (index) {
+                    var questionContainer = $(this);
+                    var questionId = questionContainer.find("#questionId_" + (index + 1)).val();
+                    var selectedOption = questionContainer.find("input[name='Questions[" + index + "].CorrectOption']:checked").val();
+
+                    if ($("#selectQuestion_" + (index + 1)).is(":checked") && selectedOption && questionId) {
+                        var questionData = {
+                            QuestionId: parseInt(questionId),
+                            SelectedOption: parseInt(selectedOption)
+                        };
+                        questionResponses.push(questionData);
+                    } else if (!$("#selectQuestion_" + (index + 1)).is(":checked")) {
+                        toastr.warning("Soru " + (index + 1) + " seçilmedi!");
+                    } else {
+                        toastr.warning("Soru " + (index + 1) + " için lütfen doğru cevabı seçiniz!");
                     }
                 });
 
-                event.preventDefault(); // Formun gönderimini engelle
+                // Toplanan soru-cevap çiftlerini surveyData'ya ata
+                surveyData.QuestionResponses = questionResponses;
+
+                // Diğer işlemleri burada yapabilirsiniz, kaydetme işlemi vb.
+                saveSurveyData();
             });
+
+
         });
 
         function showQuestion(index) {
@@ -113,8 +93,32 @@
             }
             showQuestion(currentQuestionIndex);
         }
+
+        function saveSurveyData() {
+            // Diğer işlemleri burada yapabilirsiniz, kaydetme işlemi vb.
+            $.ajax({
+                url: "/Survey/SaveSurvey",
+                type: "POST",
+                // contentType: "application/json; charset=utf-8",
+                data: (surveyData),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success("Anket kaydedildi.");
+                        window.location.reload();
+                    } else {
+                        // Hata oluştuysa hata mesajını işle.
+                        toastr.error("Onaylama işlemi başarılı oldu. Hata: " + response.message);
+                    }
+                },
+                error: function () {
+                    // Hata oluştuysa hata mesajını işle.
+                    toastr.error('İstek başarısız.');
+                }
+            });
+        }
     </script>
 }
+
 
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -126,28 +130,28 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="FirstName">Ad</label>
-                        <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName" required>
+                        <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="LastName">Soyad</label>
-                        <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName" required>
+                        <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName">
                     </div>
                 </div>
             </div>
-            <button class="btn btn-success btn-select" >Soru Ekle</button>
+            @*   <button class="btn btn-success btn-select" >Soru Ekle</button> *@
             <!-- Sorular burada görüntülenir -->
             @for (var i = 0; i < Model.Questions.Count; i++)
             {
                 <div class="card mt-3 question">
                     <div class="card-body">
                         <!-- Soru kimlik numarasını saklamak için gizli bir alan ekleyin -->
-@*                         <input type="hidden" id="questionId" value="@Model.Questions[i].Id" />
- *@                        
- 
-                    @* <input type="hidden" id="questionId_@(i + 1)" value="@Model.Questions[i].Id" /> *@
-                       
+                        @*                         <input type="hidden" id="questionId" value="@Model.Questions[i].Id" />
+                    *@
+
+                        @* <input type="hidden" id="questionId_@(i + 1)" value="@Model.Questions[i].Id" /> *@
+
 
                         <div class="form-check form-check-success">
                             <label class="form-check-label font-weight-bold">
@@ -160,8 +164,8 @@
 
                         <div class="form-group">
                             <label for="question_@(i + 1)">Soru Metni</label>
-                            <input type="text" class="form-control" id="question_@(i + 1)" name="Questions[@i].QuestionText" required value="@Model.Questions[i].QuestionText">
-                           @*  <input type="hidden" value="@Model.Questions[i].Id" /> *@
+                            <input type="text" class="form-control" id="question_@(i + 1)" name="Questions[@i].QuestionText" value="@Model.Questions[i].QuestionText">
+                            @*  <input type="hidden" value="@Model.Questions[i].Id" /> *@
 
                         </div>
                         <div class="form-group">
@@ -188,7 +192,7 @@
                             </div>
                             <!-- Diğer seçenekler burada -->
                         </div>
-                        <button class="btn btn-danger" onclick="removeQuestion(this)">Kaldır</button>
+                        @*                         <button class="btn btn-danger" onclick="removeQuestion(this)">Kaldır</button> *@
                     </div>
                 </div>
             }
@@ -197,11 +201,13 @@
             <button class="btn btn-primary mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru</button>
             <button class="btn btn-primary mt-3" id="nextButton" onclick="navigate(1)">Sonraki Soru</button>
 
-            <button type="submit" class="btn btn-primary mt-3 btnsave">Anketi Oluştur</button>
+            <button type="submit" class="btn btn-primary mt-3 btnsurvey">Anketi Oluştur</button>
             @* </form> *@
         </div>
     </div>
 </div>
+
+
 
 @*
 <div class="container">

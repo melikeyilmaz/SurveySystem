@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Context;
-using SurveySystem.Migrations;
 using SurveySystem.Models;
 
 namespace SurveySystem.Controllers
@@ -40,58 +39,178 @@ namespace SurveySystem.Controllers
 
             return View(survey);
         }
-        [HttpPost]
-        public IActionResult NonMemberSurvey(Survey model)
+
+
+        public IActionResult SaveSurvey(Survey surveyData)
         {
-            if (ModelState.IsValid)
+            try
             {
-                // Yeni bir anket oluşturun
-                var survey = new Survey
+                // Verileri doğrulama
+                if (!ModelState.IsValid)
                 {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Questions = new List<Question>()
-                };
-
-                // Her bir soruyu döngü içinde işleyin ve anket nesnesine ekleyin
-                foreach (var question in model.Questions)
-                {
-                    var existingQuestion = _context.Questions.FirstOrDefault(q => q.Id == question.Id);
-                    if (existingQuestion != null)
-                    {
-                        // Radio butonlardan gelen seçimi doğru cevap olarak ayarlayın
-                        int correctChoiceId = Convert.ToInt32(Request.Form[$"Questions[{model.Questions.IndexOf(question)}].CorrectChoiceId"]);
-
-                        // Checkbox'un adından seçilen sorunun ID'sini alın
-                        int selectedQuestionId = Convert.ToInt32(Request.Form[$"Questions[{model.Questions.IndexOf(question)}].SelectedQuestionId"]);
-
-                        // Doğru cevabı kaydedin
-                        var correctAnswer = new CorrectAnswer
-                        {
-                            Question = existingQuestion,
-                            CorrectChoiceId = correctChoiceId,
-                            QuestionId = selectedQuestionId
-                        };
-
-                        // CorrectAnswer'ı veritabanına ekleyin
-                        _context.CorrectAnswers.Add(correctAnswer);
-
-                        survey.Questions.Add(existingQuestion);
-                    }
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    return Json(new { success = false, errors });
                 }
 
-                // Anketi veritabanına ekleyin
+                // Survey verisini oluşturun
+                var survey = new Survey
+                {
+                    FirstName = surveyData.FirstName,
+                    LastName = surveyData.LastName,
+                    SubmissionDate = DateTime.Now,
+                    QuestionResponses = surveyData.QuestionResponses // Birden fazla soru ve cevapları buraya ekleyin
+                };
+
+                // Survey verisini veritabanına ekleyin ve kaydedin
                 _context.Surveys.Add(survey);
                 _context.SaveChanges();
 
-                // Başarılı bir sonuç döndürün veya yönlendirin
-                return RedirectToAction("ThankYou");
+                return Json(new { success = true });
             }
-
-            // Model geçerli değilse, hata mesajları ile birlikte sayfayı tekrar göster
-            return View(model);
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
+
+        //[HttpPost]
+        //public IActionResult SaveSurvey(Survey surveyData)
+        //{
+        //    try
+        //    {
+        //        // Verileri doğrulama
+        //        if (!ModelState.IsValid)
+        //        {
+        //            // Geçersiz veri varsa hata mesajlarını döndür
+        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        //            return Json(new { success = false, errors });
+        //        }
+
+
+        //        // Survey verisini oluşturun
+        //        var survey = new Survey
+        //        {
+        //            FirstName = surveyData.FirstName,
+        //            LastName = surveyData.LastName,
+        //            SubmissionDate = DateTime.Now, // Gönderilme tarihini şu anki tarih olarak ayarla
+        //            QuestionId = surveyData.QuestionId,
+        //            SelectedOption = surveyData.SelectedOption
+        //        };
+
+        //        // Survey verisini veritabanına ekleyin ve kaydedin
+        //        _context.Surveys.Add(survey);
+        //        _context.SaveChanges();
+
+
+        //        // Başarılı yanıt gönder
+        //        return Json(new { success = true });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Hata oluştuysa hata mesajını döndür
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //[HttpPost]
+        //public IActionResult SaveSurvey(Survey surveyData)
+        //{
+        //    ModelState.Clear(); // ModelState'i temizleyin
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            // Yeni bir anket oluşturun
+        //            var survey = new Survey
+        //            {
+        //                FirstName = surveyData.FirstName,
+        //                LastName = surveyData.LastName,
+        //                Questions = new List<Question>()
+        //            };
+
+        //            // Her bir soruyu döngü içinde işleyin ve anket nesnesine ekleyin
+        //            foreach (var question in surveyData.Questions)
+        //            {
+        //                var existingQuestion = _context.Questions.FirstOrDefault(q => q.Id == question.Id);
+        //                var existingCorrectAnswer = _context.CorrectAnswers.FirstOrDefault(ca => ca.QuestionId == question.Id);
+
+        //                if (existingQuestion != null && existingCorrectAnswer != null)
+        //                {
+        //                    // Doğru cevabı oluşturun
+        //                    var correctAnswer = new CorrectAnswer
+        //                    {
+        //                        SurveyId = survey.Id,
+        //                        QuestionId = existingQuestion.Id,
+        //                        CorrectChoiceId = existingCorrectAnswer.CorrectChoiceId
+        //                    };
+
+        //                    // CorrectAnswer'ı veritabanına ekleyin
+        //                    _context.CorrectAnswers.Add(correctAnswer);
+
+        //                    survey.Questions.Add(existingQuestion);
+        //                }
+        //            }
+
+        //            // Anketi veritabanına ekleyin
+        //            _context.Surveys.Add(survey);
+        //            _context.SaveChanges();
+
+        //            return Json(new { success = true });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // İç istisna ayrıntılarını alın
+        //            var innerException = ex.InnerException;
+        //            while (innerException != null)
+        //            {
+        //                // InnerException'ın mesajını veya başka ayrıntılarını loglayın veya inceleyin
+        //                // Loglama yapabilir veya hata mesajını innerException.Message ile alabilirsiniz.
+        //                innerException = innerException.InnerException;
+        //            }
+
+        //            return Json(new { success = false, message = "An error occurred while saving the entity changes. See the inner exception for details." });
+        //        }
+        //    }
+
+        //    var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+        //    return Json(new { success = false, message = errors });
+        //}
+
+        //[HttpPost]
+        //public IActionResult SaveSurvey(Survey model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Yeni bir anket oluşturun
+        //        var survey = new Survey
+        //        {
+        //            FirstName = model.FirstName,
+        //            LastName = model.LastName,
+        //            Questions = new List<Question>()
+        //        };
+
+        //        // Her bir soruyu döngü içinde işleyin ve anket nesnesine ekleyin
+        //        foreach (var question in model.Questions)
+        //        {
+        //            var existingQuestion = _context.Questions.FirstOrDefault(q => q.Id == question.Id);
+        //            if (existingQuestion != null)
+        //            {
+        //                survey.Questions.Add(existingQuestion);
+        //            }
+        //        }
+
+        //        // Anketi veritabanına ekleyin
+        //        _context.Surveys.Add(survey);
+        //        _context.SaveChanges();
+
+        //        // Başarılı bir sonuç döndürün veya yönlendirin
+        //        return RedirectToAction("ThankYou");
+        //    }
+
+        //    // Model geçerli değilse, hata mesajları ile birlikte sayfayı tekrar göster
+        //    return View(model);
+        //}
 
 
 
