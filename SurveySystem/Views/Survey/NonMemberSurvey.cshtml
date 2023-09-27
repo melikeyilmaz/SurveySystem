@@ -42,6 +42,17 @@
             // Sayfa yüklendiğinde ilk soruyu göster
             showQuestion(currentQuestionIndex);
 
+            // Checkbox değişikliklerini dinle
+            $(".form-check-input[type='checkbox']").change(function () {
+                var checkbox = $(this);
+                var questionContainer = checkbox.closest(".question"); // Soru konteynerini bul
+
+                if (!checkbox.is(":checked")) {
+                    // Checkbox işaretsizse, ilgili soruya ait radio butonları temizle
+                    questionContainer.find(".form-check-input[type='radio']").prop("checked", false);
+                }
+            });
+
             $(".btnsurvey").click(function () {
                 // Ad ve soyadı al
                 surveyData.FirstName = $("#FirstName").val();
@@ -51,6 +62,8 @@
                 var questionResponses = [];
 
                 // Tüm soruları döngü ile gez
+                var selectedQuestionCount = 0; // Seçilen soru sayısını takip etmek için değişken ekledik.
+
                 $(".question").each(function (index) {
                     var questionContainer = $(this);
                     var questionId = questionContainer.find("#questionId_" + (index + 1)).val();
@@ -62,19 +75,21 @@
                             SelectedOption: parseInt(selectedOption)
                         };
                         questionResponses.push(questionData);
-                    } else if (!$("#selectQuestion_" + (index + 1)).is(":checked")) {
-                        toastr.warning("Soru " + (index + 1) + " seçilmedi!");
-                    } else {
-                        toastr.warning("Soru " + (index + 1) + " için lütfen doğru cevabı seçiniz!");
+                        selectedQuestionCount++; // Her seçilen soru için sayaç artırılır.
                     }
                 });
 
-                // Toplanan soru-cevap çiftlerini surveyData'ya ata
-                surveyData.QuestionResponses = questionResponses;
+                if (selectedQuestionCount == 4) { // Kullanıcının tam olarak 4 soru seçmesi gerekir.
+                    // Toplanan soru-cevap çiftlerini surveyData'ya ata
+                    surveyData.QuestionResponses = questionResponses;
 
-                // Diğer işlemleri burada yapabilirsiniz, kaydetme işlemi vb.
-                saveSurveyData();
+                    // Diğer işlemleri burada yapabilirsiniz, kaydetme işlemi vb.
+                    saveSurveyData();
+                } else {
+                    toastr.warning("Üye olmayan kullanıcılar tam olarak 4 soru seçmelidir!");
+                }
             });
+
 
 
         });
@@ -107,7 +122,7 @@
                         window.location.reload();
                     } else {
                         // Hata oluştuysa hata mesajını işle.
-                        toastr.error("Onaylama işlemi başarılı oldu. Hata: " + response.message);
+                        toastr.error("Onaylama işlemi başarısız oldu. Hata: " + response.message);
                     }
                 },
                 error: function () {
