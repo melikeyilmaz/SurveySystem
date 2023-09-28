@@ -4,10 +4,10 @@
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
 }
 @section Styles{
-    <style>     
+    <style>
         h4 {
             text-align: center;
-        }     
+        }
     </style>
 }
 @section Scripts{
@@ -23,6 +23,28 @@
                 navigate(1);
             });
 
+            $("input[type='radio']").change(function () {                
+                var questionIndex = $(this).data("option");
+
+                // Tüm cevapların çerçevesini temizle
+                $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption']").parent().css("border", "none");
+
+                // Kullanıcının seçtiği cevap
+                var selectedOption = parseInt($("input[name='Questions[" + questionIndex + "].SelectedOption']:checked").val());
+                // Doğru cevap
+                var correctAnswer = parseInt($(".correct-answer[data-question-index='" + questionIndex + "']").val());
+
+                if (selectedOption === correctAnswer) {
+                    // Kullanıcının seçtiği cevap doğru ise yeşil çerçeve ile işaretler
+                    $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + selectedOption + "']").parent().css("border", "2px solid green");
+                } else {
+                    // Yanlış ise kırmızı çerçeve ile işaretler
+                    $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + selectedOption + "']").parent().css("border", "2px solid red");
+
+                    // Doğru cevapı yeşil çerçeve ile işaretler
+                    $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + correctAnswer + "']").parent().css("border", "2px solid green");
+                }
+            });
         });
 
         function showQuestion(index) {
@@ -40,7 +62,7 @@
             }
             showQuestion(currentQuestionIndex);
         }
-       
+
     </script>
 }
 <div class="col-12 grid-margin stretch-card">
@@ -56,30 +78,36 @@
                         <div class="form-group">
                             <label for="question_@(i + 1)">Soru @(i + 1)</label>
                             <p>@Model.Questions[i].QuestionText</p>
+                            <input type="hidden" id="questionId_@(i + 1)" name="Questions[@i].QuestionId" value="@Model.Questions[i].Id" />
+                            <!-- Doğru cevabı buraya ekleyin -->
+
+                            <input type="text" id="correctAnswer_@(i + 1)" class="correct-answer" data-question-index="@i" value="@Model.QuestionResponses[i].SelectedOption" />
                         </div>
-                        <div class="form-group">                           
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].SelectedOption" value="1">
+                        <div class="form-group">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].SelectedOption" value="1" data-option="@i">
                                 <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
                             </div>
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].SelectedOption" value="2">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].SelectedOption" value="2" data-option="@i">
                                 <label class="form-check-label" for="option2_@(i + 1)">@(Model.Questions[i].Option2)</label>
                             </div>
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].SelectedOption" value="3">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].SelectedOption" value="3" data-option="@i">
                                 <label class="form-check-label" for="option3_@(i + 1)">@(Model.Questions[i].Option3)</label>
                             </div>
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].SelectedOption" value="4">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].SelectedOption" value="4" data-option="@i">
                                 <label class="form-check-label" for="option4_@(i + 1)">@(Model.Questions[i].Option4)</label>
                             </div>
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].SelectedOption" value="5">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].SelectedOption" value="5" data-option="@i">
                                 <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
                             </div>
                         </div>
                     </div>
+                    <button type="button" class="btn btn-primary" onclick="checkAnswer(@i)">Cevabı Kontrol Et</button>
+
                 </div>
             }
             <button type="button" class="btn btn-success btn-icon-text mt-3 btnok" onclick="navigate(1)"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Tamamla</button>

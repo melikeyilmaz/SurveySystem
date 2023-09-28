@@ -111,6 +111,45 @@ namespace SurveySystem.Controllers
         [HttpGet]
         public IActionResult AnsweringSurvey(string uniqueId, int surveyId)
         {
+            //    var surveyWithQuestions = _context.Surveys
+            //                .Where(survey => survey.UniqueId == uniqueId) // UniqueId'ye göre anketleri seç
+            //                .Include(survey => survey.QuestionResponses) // Her anketin QuestionResponses'larını getir
+            //                    .ThenInclude(response => response.Question) // QuestionResponse içindeki Question'ları getir
+            //                .SelectMany(survey => survey.QuestionResponses, (survey, response) => new
+            //                {
+            //                    Survey = survey,
+            //                    Response = response
+            //                })
+            //                .Select(result => new
+            //                {
+            //                    SurveyId = result.Survey.Id,
+            //                    QuestionText = result.Response.Question.QuestionText,
+            //                    Option1 = result.Response.Question.Option1,
+            //                    Option2 = result.Response.Question.Option2,
+            //                    Option3 = result.Response.Question.Option3,
+            //                    Option4 = result.Response.Question.Option4,
+            //                    Option5 = result.Response.Question.Option5,
+            //                    SelectedOption = result.Response.SelectedOption
+            //                })
+            //                .ToList();
+
+
+
+            //        var surveyWithQuestions = _context.Surveys
+            //.Where(survey => survey.UniqueId == uniqueId) // UniqueId'ye göre anketleri seç
+            //.Include(survey => survey.QuestionResponses) // Her anketin QuestionResponses'larını getir
+            //    .ThenInclude(response => response.Question) // QuestionResponse içindeki Question'ları getir
+            //.Select(survey => new
+            //{
+            //    Survey = survey,
+            //    QuestionResponses = survey.QuestionResponses.Select(response => new
+            //    {
+            //        response.SelectedOption,
+            //        Question = response.Question
+            //    })
+            //})
+            //.ToList();
+
             var surveyWithQuestions = _context.Surveys
                             .Where(survey => survey.UniqueId == uniqueId)
                             //.Where(survey => survey.Id == surveyId)
@@ -134,7 +173,7 @@ namespace SurveySystem.Controllers
 
                 surveyWithQuestions.Questions = questions;
             }
-      
+
 
             return View(surveyWithQuestions);
         }
