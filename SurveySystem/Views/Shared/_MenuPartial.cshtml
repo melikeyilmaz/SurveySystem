@@ -45,6 +45,7 @@
                     <span class="menu-title">Icons</span>
                 </a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
                     <i class="mdi mdi-comment-question-outline menu-icon"></i>
@@ -52,7 +53,7 @@
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">                       
+                    <ul class="nav flex-column sub-menu">
                         @if (User != null && User.IsInRole("Admin"))
                         {
                             <li class="nav-item"> <a class="nav-link" href="/Admin/QuestionList"> Soru Havuzu </a></li>
@@ -66,12 +67,26 @@
                     </ul>
                 </div>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                    <i class="mdi mdi-comment-question-outline menu-icon"></i>
+                    <span class="menu-title"> Anketler</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                @* <div class="collapse" id="auth">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="/Survey/AnsweringSurvey"> Anket Cevaplama </a></li>
+
+                    </ul>
+                </div> *@
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Home/SignOut">
-                <i class="mdi mdi-logout menu-icon"></i>
-                <span class="menu-title">Çıkış Yap</span>
-            </a>
-        </li>
+                    <i class="mdi mdi-logout menu-icon"></i>
+                    <span class="menu-title">Çıkış Yap</span>
+                </a>
+            </li>
         }
     </ul>
 </nav>

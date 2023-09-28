@@ -113,7 +113,10 @@ app.MapControllerRoute(
     pattern: "Admin/DeleteQuestion/{id}",
     defaults: new { controller = "Admin", action = "DeleteQuestion" });
 
-
+app.MapControllerRoute(
+    name: "answeringSurvey",
+    pattern: "Survey/AnsweringSurvey/{uniqueId}",
+    defaults: new { controller = "Survey", action = "AnsweringSurvey" });
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapDefaultControllerRoute();

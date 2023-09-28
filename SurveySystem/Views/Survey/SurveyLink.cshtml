@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "SurveyLink";
+    Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .btn {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        h4 {
+            text-align: center;
+        }
+
+    </style>
+}
+@section Scripts{
+    <script type="text/javascript">      
+        $(document).ready(function () {
+            $("#startSurvey").click(function () {
+                var uniqueId = $("#UniqueId").val();
+                // surveyUrl değerini kullanarak anket sayfasına yönlendirme işlemi yapabilirsiniz.
+                // Örneğin:
+                window.location.href = "/Survey/AnsweringSurvey/" + uniqueId;
+            });
+
+
+        });       
+    </script>
+}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Ankete Giriş Sayfası</h4>
+            <p class="card-description">
+                Ankete giriş yapabilmek için sizinle paylaşılan URL'i aşağıdaki alana giriniz.
+            </p>
+            @* <form class="forms-sample"> *@
+            <div class="form-group">
+                <label for="UniqueId">Anket URL'i</label>
+                <input type="UniqueId" class="form-control" id="UniqueId" placeholder="Anket URL'i">
+            </div>
+
+            <button type="button" class="btn btn-info btn-icon-text" id="startSurvey">
+                <i class="mdi mdi-file-check btn-icon-prepend"></i>
+                Gönder
+            </button>
+           
+
+            @* </form> *@
+        </div>
+    </div>
+</div>

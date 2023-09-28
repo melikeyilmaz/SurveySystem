@@ -106,6 +106,73 @@ namespace SurveySystem.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult AnsweringSurvey(string uniqueId)
+        {
+
+            var surveyId = 7; // Anketin ID'sini belirleyin veya dilediğiniz bir şekilde alın
+
+            var surveyWithQuestions = _context.Surveys
+                 .Where(survey => survey.UniqueId == uniqueId)
+                .Include(survey => survey.QuestionResponses) // İlgili soruların cevaplarını çekmek için Include kullanın
+                .ThenInclude(response => response.Question) // Soruları da çekmek için Include kullanın
+                .FirstOrDefault(survey => survey.Id == surveyId);
+
+            if (surveyWithQuestions != null)
+            {
+                var questions = surveyWithQuestions.QuestionResponses
+                    .Select(response => new Question
+                    {
+                        QuestionText = response.Question.QuestionText,
+                        Option1 = response.Question.Option1,
+                        Option2 = response.Question.Option2,
+                        Option3 = response.Question.Option3,
+                        Option4 = response.Question.Option4,
+                        Option5 = response.Question.Option5,
+                        //SelectedOption = response.SelectedOption
+                    })
+                    .ToList();
+                surveyWithQuestions.Questions = questions;
+                // questions listesi şimdi ilgili ankete ait soruları ve cevaplarını içeriyor
+            }
+            else
+            {
+                // Belirtilen anket ID'si ile eşleşen anket bulunamadı
+            }
+           
+            return View(surveyWithQuestions);
+        }
+
+        //public async Task<IActionResult> AnsweringSurvey(int surveyId)
+        //{
+        //    // Veritabanından ankete ait tüm soruları çekin
+        //    var answeringSurvey = await _context.Questions
+        //        .Where(q => q.Surveys.Any(s => s.Id == surveyId))
+        //        .ToListAsync();
+
+        //    return View(answeringSurvey);
+        //}
+        [HttpGet]
+        public IActionResult SurveyLink()
+        {
+
+            return View();
+        }
+
+        //public IActionResult AnsweringSurvey(string uniqueId)
+        //{
+        //    // Benzersiz ID'ye sahip anketi veritabanından alın
+        //    var survey = _context.Surveys.SingleOrDefault(s => s.UniqueId == uniqueId);
+
+        //    if (survey == null)
+        //    {
+        //        // Anket bulunamadı, hata sayfasına yönlendirin veya uygun bir işlem yapın
+        //        return RedirectToAction("Error");
+        //    }
+
+        //    // Anketi görüntüleme sayfasını göster
+        //    return View(survey);
+        //}
 
 
         //public IActionResult SaveSurvey(Survey surveyData)

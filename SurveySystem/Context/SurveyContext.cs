@@ -15,6 +15,7 @@ namespace SurveySystem.Context
 
         public DbSet<Question> Questions { get; set; }
         public DbSet<Survey> Surveys { get; set; }
+        public DbSet<Survey> QuestionResponse { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,7 +27,17 @@ namespace SurveySystem.Context
                 .HasForeignKey(q => q.UserId);
 
             modelBuilder.Entity<Survey>()
-       .HasKey(s => s.Id);
+                .HasKey(s => s.Id);
+
+            modelBuilder.Entity<QuestionResponse>()
+                .HasOne(qr => qr.Survey)
+                .WithMany(s => s.QuestionResponses)
+                .HasForeignKey(qr => qr.SurveyId);
+
+            modelBuilder.Entity<QuestionResponse>()
+                .HasOne(qr => qr.Question)
+                .WithMany()
+                .HasForeignKey(qr => qr.QuestionId);
         }
 
 
