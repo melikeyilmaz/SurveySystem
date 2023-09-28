@@ -89,12 +89,12 @@ namespace SurveySystem.Controllers
                     // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
                     if (User.IsInRole("Admin"))
                     {
-                        model.ApprovalStatus = ApprovalStatus.Onaylandi; // Admin eklediği için onaylandı olarak işaretle.
+                        model.ApprovalStatus = ApprovalStatus.Approved; // Admin eklediği için onaylandı olarak işaretle.
                     }
                     else
                     {
                         // Üye eklediyse, onay bekleme durumunda bırak.
-                        model.ApprovalStatus = ApprovalStatus.OnayBekliyor;
+                        model.ApprovalStatus = ApprovalStatus.PendingApproval;
                     }
                    
                     model.UserId = int.Parse(userId);
@@ -166,7 +166,7 @@ namespace SurveySystem.Controllers
         public IActionResult UnApprovedQuestions()
         {
             var unapprovedQuestions = _context.Questions
-                        .Where(q => q.ApprovalStatus == ApprovalStatus.OnayBekliyor) // Onay bekleyen soruları seç
+                        .Where(q => q.ApprovalStatus == ApprovalStatus.PendingApproval) // Onay bekleyen soruları seç
                         .OrderByDescending(q => q.Id)
                         .ToList();
 
@@ -189,14 +189,14 @@ namespace SurveySystem.Controllers
                 if (approve)
                 {
                     // Soruyu onayla                   
-                    question.ApprovalStatus = ApprovalStatus.Onaylandi; // Onaylandı durumunu ayarla
+                    question.ApprovalStatus = ApprovalStatus.Approved; // Onaylandı durumunu ayarla
                     _context.SaveChanges();
                     return Json(new { success = true, status = "Onaylandı" });
                 }
                 else
                 {
                     // Soruyu reddet
-                    question.ApprovalStatus = ApprovalStatus.Reddedildi; // Reddedildi durumunu ayarla
+                    question.ApprovalStatus = ApprovalStatus.Rejected; // Reddedildi durumunu ayarla
                     _context.SaveChanges();
                     return Json(new { success = true, status = "Reddedildi" });
                 }

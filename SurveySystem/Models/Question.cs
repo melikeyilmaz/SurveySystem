@@ -4,25 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models
 {
-    //public enum ApprovalStatus
-    //{
-    //    [Display(Name = "Onay Bekliyor")]
-    //    PendingApproval,
-
-    //    [Display(Name = "Onaylandı")]
-    //    Approved,
-
-    //    [Display(Name = "Reddedildi")]
-    //    Rejected
-    //}
-
-    // Enum tanımlaması
     public enum ApprovalStatus
     {
-        OnayBekliyor,
-        Onaylandi,
-        Reddedildi        
+        [Display(Name = "Onay Bekliyor")]
+        PendingApproval,
+
+        [Display(Name = "Onaylandı")]
+        Approved,
+
+        [Display(Name = "Reddedildi")]
+        Rejected
     }
+   
     public class Question
     { 
         public int Id { get; set; }

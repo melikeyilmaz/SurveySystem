@@ -58,15 +58,15 @@
                                     @Html.DisplayFor(modelItem => item.Option5)
                                 </td>
                                 <td>
-                                    @if (item.ApprovalStatus == ApprovalStatus.Onaylandi)
+                                    @if (item.ApprovalStatus == ApprovalStatus.Approved)
                                     {
                                         <label class="badge badge-success">Onaylandı</label>                                        
                                     }
-                                    else if (item.ApprovalStatus == ApprovalStatus.Reddedildi)
+                                    else if (item.ApprovalStatus == ApprovalStatus.Rejected)
                                     {
                                         <label class="badge badge-danger">Reddedildi</label>
                                     }
-                                    else if (item.ApprovalStatus == ApprovalStatus.OnayBekliyor)
+                                    else if (item.ApprovalStatus == ApprovalStatus.PendingApproval)
                                     {
                                         <label class="badge badge-warning">Onay Bekliyor</label>                                        
                                     }
