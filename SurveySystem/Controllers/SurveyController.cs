@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Context;
 using SurveySystem.Models;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace SurveySystem.Controllers
 {
@@ -13,21 +14,6 @@ namespace SurveySystem.Controllers
         {
             _context = context;
         }
-
-        //[HttpGet]
-        //public IActionResult NonMemberSurvey()
-        //{
-        //    //var questions = _context.Questions.ToList();
-
-        //    //return View(questions);
-
-        //    var survey = new Survey
-        //    {
-        //        Questions = _context.Questions.ToList()
-        //    };
-
-        //    return View(survey);
-        //}
 
         [HttpGet]
         public IActionResult NonMemberSurvey()
@@ -66,7 +52,7 @@ namespace SurveySystem.Controllers
             return View(survey);
         }
 
-
+        [HttpPost]
         public IActionResult SaveSurvey(Survey surveyData)
         {
             try
@@ -235,6 +221,34 @@ namespace SurveySystem.Controllers
             return View("Error"); // Örnek bir hata sayfasına yönlendirme
 
         }
+
+        [HttpPost]
+        public IActionResult SubmitSurveyAnswer(SurveyScore surveyscore)
+        {
+            try
+            {
+                var score = new SurveyScore
+                {
+                    SurveyId = surveyscore.SurveyId, // Anket ID'si
+                    QuestionId = surveyscore.QuestionId, // Soru ID'si
+                    SelectedOption = surveyscore.SelectedOption, // Kullanıcının seçtiği cevap
+                    FirstName = surveyscore.FirstName, // Kullanıcının adı
+                    LastName = surveyscore.LastName, // Kullanıcının soyadı
+                    Score = surveyscore.Score  // Puanlama
+                };
+                _context.Add(surveyscore);
+                _context.SaveChanges();
+                return Json(new { isSuccess = true, message = "Anket başarıyla cevaplandı." });
+               
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        
+
 
         //public IActionResult AnsweringSurvey(string uniqueId)
         //{
