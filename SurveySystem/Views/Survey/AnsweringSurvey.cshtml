@@ -10,7 +10,39 @@
         }     
     </style>
 }
+@section Scripts{
+    <script type="text/javascript">
+        var currentQuestionIndex = 0;
 
+        $(document).ready(function () {
+            // Sayfa yüklendiğinde ilk soruyu göster
+            showQuestion(currentQuestionIndex);
+
+            // İleri gitmek için bir düğmeye tıklandığında navigate işlevini çağır.
+            $("#btnok").click(function () {
+                navigate(1);
+            });
+
+        });
+
+        function showQuestion(index) {
+            $(".question").hide();
+            $(".question:eq(" + index + ")").show();
+        }
+
+        function navigate(direction) {
+            currentQuestionIndex += direction;
+            if (currentQuestionIndex < 0) {
+                currentQuestionIndex = 0;
+            } else if (currentQuestionIndex >= @Model.Questions.Count) {
+                // Sadece ileri gidilebilsin
+                currentQuestionIndex = @Model.Questions.Count - 1;
+            }
+            showQuestion(currentQuestionIndex);
+        }
+       
+    </script>
+}
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
@@ -25,8 +57,7 @@
                             <label for="question_@(i + 1)">Soru @(i + 1)</label>
                             <p>@Model.Questions[i].QuestionText</p>
                         </div>
-                        <div class="form-group">
-                            <label>Seçenekler</label>
+                        <div class="form-group">                           
                             <div class="form-check">
                                 <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].SelectedOption" value="1">
                                 <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
@@ -51,39 +82,8 @@
                     </div>
                 </div>
             }
-
-            <button type="button" class="btn btn-success btn-icon-text mt-3 btnsurvey"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Tamamla</button>
+            <button type="button" class="btn btn-success btn-icon-text mt-3 btnok" onclick="navigate(1)"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Tamamla</button>
 
         </div>
     </div>
 </div>
-
-
-
-
-
-
-@* <div class="container">
-    <h1>Anket Cevaplama Sayfası</h1>
-    <div class="question">
-        <p>Soru 1: Hangi renkler temel renklerdir?</p>
-        <ul class="options">
-            <li><input type="radio" name="q1" value="1"> Kırmızı</li>
-            <li><input type="radio" name="q1" value="2"> Sarı</li>
-            <li><input type="radio" name="q1" value="3"> Mavi</li>
-            <li><input type="radio" name="q1" value="4"> Yeşil</li>
-        </ul>
-    </div>
-    <div class="question">
-        <p>Soru 2: Hangi gezegen güneş sisteminde yer alır?</p>
-        <ul class="options">
-            <li><input type="radio" name="q2" value="1"> Yıldız</li>
-            <li><input type="radio" name="q2" value="2"> Dünya</li>
-            <li><input type="radio" name="q2" value="3"> Jüpiter</li>
-            <li><input type="radio" name="q2" value="4"> Uydu</li>
-        </ul>
-    </div>
-    <!-- Diğer soruları burada gösterin -->
-
-    <button id="submitBtn">Cevapları Gönder</button>
-</div> *@
