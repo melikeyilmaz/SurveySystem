@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurveySystem.Context;
 
@@ -11,9 +12,11 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    partial class SurveyContextModelSnapshot : ModelSnapshot
+    [Migration("20230929072916_InitialScoreSurvey")]
+    partial class InitialScoreSurvey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,16 +367,11 @@ namespace SurveySystem.Migrations
                     b.Property<int>("SurveyId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SurveyScoreId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
                     b.HasIndex("SurveyId");
-
-                    b.HasIndex("SurveyScoreId");
 
                     b.ToTable("SurveyResponses");
                 });
@@ -515,10 +513,6 @@ namespace SurveySystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurveySystem.Models.SurveyScore", null)
-                        .WithMany("SurveyResponses")
-                        .HasForeignKey("SurveyScoreId");
-
                     b.Navigation("Question");
 
                     b.Navigation("Survey");
@@ -543,11 +537,6 @@ namespace SurveySystem.Migrations
             modelBuilder.Entity("SurveySystem.Models.Survey", b =>
                 {
                     b.Navigation("QuestionResponses");
-                });
-
-            modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
-                {
-                    b.Navigation("SurveyResponses");
                 });
 #pragma warning restore 612, 618
         }

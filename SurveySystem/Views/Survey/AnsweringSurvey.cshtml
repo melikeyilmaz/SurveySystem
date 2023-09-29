@@ -13,19 +13,20 @@
 @section Scripts{
     <script type="text/javascript">
         var currentQuestionIndex = 0;
+        var totalCorrectAnswers = 0;
+        var totalWrongAnswers = 0;
+
+        var surveyResponses = []; // Soru ve cevapları saklamak için bir dizi oluşturun
         var delayInSeconds = 3; // Soru değişiminde beklemek istediğiniz süre (örneğin, 2 saniye)
+        var questionIndex;
 
         $(document).ready(function () {
             // Sayfa yüklendiğinde ilk soruyu göster
             showQuestion(currentQuestionIndex);
 
-            // // İleri gitmek için bir düğmeye tıklandığında navigate işlevini çağır.
-            // $("#btnok").click(function () {
-            //     navigate(1);
-            // });
-
             $("input[type='radio']").change(function () {
-                var questionIndex = $(this).data("option");
+                //Hangi soruya yanıt verdiğini belirlemek için this, olayı tetikleyen radyo butonunu temsil eder
+                questionIndex = $(this).data("option");
 
                 // Tüm cevapların çerçevesini temizle
                 $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption']").parent().css("border", "none");
@@ -34,17 +35,29 @@
                 var selectedOption = parseInt($("input[name='Questions[" + questionIndex + "].SelectedOption']:checked").val());
                 // Doğru cevap
                 var correctAnswer = parseInt($(".correct-answer[data-question-index='" + questionIndex + "']").val());
+                var questionId = parseInt($(".question-Id[data-questionId='" + questionIndex + "']").val());
 
                 if (selectedOption === correctAnswer) {
                     // Kullanıcının seçtiği cevap doğru ise yeşil çerçeve ile işaretler
                     $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + selectedOption + "']").parent().css("border", "2px solid green");
+                    totalCorrectAnswers++;
                 } else {
                     // Yanlış ise kırmızı çerçeve ile işaretler
                     $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + selectedOption + "']").parent().css("border", "2px solid red");
 
                     // Doğru cevapı yeşil çerçeve ile işaretler
                     $(".answer-container input[name='Questions[" + questionIndex + "].SelectedOption'][value='" + correctAnswer + "']").parent().css("border", "2px solid green");
+                    totalWrongAnswers++;
                 }
+
+                // Soru ve cevabı diziye ekleyin
+                var questionResponse = {
+                    QuestionId: questionId,
+                    SelectedOption: selectedOption
+                };
+                surveyResponses.push(questionResponse);
+
+
                 // Belirtilen süre sonunda sıradaki soruyu göster
                 setTimeout(function () {
                     currentQuestionIndex++;
@@ -56,31 +69,45 @@
                 }, delayInSeconds * 1000);
             });
 
-            $(".btnsubmit").click(function () {
-                var formData = $("#survey-form").serialize(); // Form verilerini al
+
+            // Anketi tamamla butonuna tıklanma olayını dinle
+            $("#btnCompleteSurvey").click(function () {
+                // // Form verilerini al
+                // var formData = $("#surveyForm").serialize();
+
+                // JSON nesnesi oluşturun
+                var surveyScoreData = {
+                    FirstName: $("#FirstName").val(),
+                    LastName: $("#LastName").val(),
+                    SurveyId: parseInt($(".survey-Id[data-surveyId='" + questionIndex + "']").val()),
+                    TotalCorrectAnswers: totalCorrectAnswers,
+                    TotalWrongAnswers: totalWrongAnswers,
+                    Responses: surveyResponses
+                };
 
                 $.ajax({
-                    url: "/Survey/SubmitSurveyAnswer",
-                    method: "POST",
-                    data: formData, // Form verilerini gönder
+                    url: "/Survey/CompleteSurveyAnswer",
+                    type: "POST",
+                    // contentType: "application/json; charset=utf-8",
+                    data: (surveyScoreData),
                     success: function (response) {
-                        // Sunucudan gelen yanıtı işle
-                        if (response.isSuccess) {
-                            alert(response.message);
+                        if (response.success) {
+                            toastr.success("Anket kaydedildi.");
+                            window.location.reload();
                         } else {
-                            alert("Hata: " + response.message);
+                            // Hata oluştuysa hata mesajını işle.
+                            toastr.error("Onaylama işlemi başarısız oldu. Hata: " + response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        // Hata durumunda işlem yap
-                        alert("Hata: " + error);
+                    error: function () {
+                        // Hata oluştuysa hata mesajını işle.
+                        toastr.error('İstek başarısız.');
                     }
-                });
+                });                
             });
-
         });
 
-      
+
         function showQuestionWithDelay(index, delayInSeconds) {
             // Tüm soruları gizle
             $(".question").hide();
@@ -94,79 +121,68 @@
         function showQuestion(index) {
             $(".question").hide();
             $(".question:eq(" + index + ")").show();
-        }
-        // function navigate(direction) {
-        //     currentQuestionIndex += direction;
-        //     if (currentQuestionIndex < 0) {
-        //         currentQuestionIndex = 0;
-        //     } else if (currentQuestionIndex >= @Model.Questions.Count) {
-        //         // Sadece ileri gidilebilsin
-        //         currentQuestionIndex = @Model.Questions.Count - 1;
-        //     }
-        //     showQuestion(currentQuestionIndex);
-        // }
-
+        }                        
     </script>
 }
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Cevaplama Sayfası</h4>
-            <form id="surveyForm" asp-action="AnsweringSurvey" method="post">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="FirstName">Ad</label>
-                            <input  type="text" class="form-control" id="FirstName" name="FirstName">
-                        </div>
+            @* <form id="surveyForm" asp-action="SubmitSurveyAnswer" method="post"> *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="FirstName">Ad</label>
+                        <input type="text" class="form-control" id="FirstName" name="FirstName">
                     </div>
-                    <div class="col-md-6">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="LastName">Soyad</label>
+                        <input type="text" class="form-control" id="LastName" name="LastName">
+                    </div>
+                </div>
+            </div>
+            <!-- Sorular burada görüntülenir -->
+            @for (var i = 0; i < Model.Questions.Count; i++)
+            {
+                <div class="card mt-3 question">
+                    <div class="card-body">
                         <div class="form-group">
-                            <label asp-for="LastName">Soyad</label>
-                            <input  type="text" class="form-control" id="LastName" name="LastName">
+                            <label for="question_@(i + 1)">Soru @(i + 1)</label>
+                            <p>@Model.Questions[i].QuestionText</p>
+                            <input type="text" id="questionId_@(i + 1)" class="question-Id" data-questionId="@i" name="Questions[@i].QuestionId" value="@Model.QuestionResponses[i].QuestionId" />
+                            <!-- Doğru Cevabı ve Anket Id buraya ekledim -->
+                            <input type="text" id="correctAnswer_@(i + 1)" class="correct-answer" data-question-index="@i" value="@Model.QuestionResponses[i].SelectedOption" />
+                            <input type="text" id="surveyId_@(i + 1)" class="survey-Id" data-surveyId="@i" value="@Model.QuestionResponses[i].SurveyId" />
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].SelectedOption" value="1" data-option="@i">
+                                <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
+                            </div>
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].SelectedOption" value="2" data-option="@i">
+                                <label class="form-check-label" for="option2_@(i + 1)">@(Model.Questions[i].Option2)</label>
+                            </div>
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].SelectedOption" value="3" data-option="@i">
+                                <label class="form-check-label" for="option3_@(i + 1)">@(Model.Questions[i].Option3)</label>
+                            </div>
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].SelectedOption" value="4" data-option="@i">
+                                <label class="form-check-label" for="option4_@(i + 1)">@(Model.Questions[i].Option4)</label>
+                            </div>
+                            <div class="form-check answer-container">
+                                <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].SelectedOption" value="5" data-option="@i">
+                                <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Sorular burada görüntülenir -->
-                @for (var i = 0; i < Model.Questions.Count; i++)
-                {
-                    <div class="card mt-3 question">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="question_@(i + 1)">Soru @(i + 1)</label>
-                                <p>@Model.Questions[i].QuestionText</p>
-                                <input type="hidden" id="questionId_@(i + 1)" name="Questions[@i].QuestionId" value="@Model.Questions[i].Id" />
-                                <!-- Doğru cevabı buraya ekleyin -->
-                                <input type="text" id="correctAnswer_@(i + 1)" class="correct-answer" data-question-index="@i" value="@Model.QuestionResponses[i].SelectedOption" />
-                            </div>
-                            <div class="form-group">
-                                <div class="form-check answer-container">
-                                    <input type="radio"  class="form-check-input" id="option1_@(i + 1)" name="Questions[@i].SelectedOption" value="1" data-option="@i">
-                                    <label class="form-check-label" for="option1_@(i + 1)">@(Model.Questions[i].Option1)</label>
-                                </div>
-                                <div class="form-check answer-container">
-                                    <input type="radio"  class="form-check-input" id="option2_@(i + 1)" name="Questions[@i].SelectedOption" value="2" data-option="@i">
-                                    <label class="form-check-label" for="option2_@(i + 1)">@(Model.Questions[i].Option2)</label>
-                                </div>
-                                <div class="form-check answer-container">
-                                    <input type="radio"  class="form-check-input" id="option3_@(i + 1)" name="Questions[@i].SelectedOption" value="3" data-option="@i">
-                                    <label class="form-check-label" for="option3_@(i + 1)">@(Model.Questions[i].Option3)</label>
-                                </div>
-                                <div class="form-check answer-container">
-                                    <input type="radio"  class="form-check-input" id="option4_@(i + 1)" name="Questions[@i].SelectedOption" value="4" data-option="@i">
-                                    <label class="form-check-label" for="option4_@(i + 1)">@(Model.Questions[i].Option4)</label>
-                                </div>
-                                <div class="form-check answer-container">
-                                    <input type="radio" class="form-check-input" id="option5_@(i + 1)" name="Questions[@i].SelectedOption" value="5" data-option="@i">
-                                    <label class="form-check-label" for="option5_@(i + 1)">@(Model.Questions[i].Option5)</label>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="checkAnswer(@i)">Cevabı Kontrol Et</button>
-                    </div>
-                }
-                <button type="button" class="btn btn-success btn-icon-text mt-3 btnsubmit" @* onclick="navigate(1)" *@><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Tamamla</button>
-            </form>
+            }
+            <button type="submit" class="btn btn-success btn-icon-text mt-3" id="btnCompleteSurvey"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Tamamla</button>
+            @* </form> *@
         </div>
     </div>
 </div>

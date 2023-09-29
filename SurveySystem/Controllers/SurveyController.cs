@@ -223,23 +223,31 @@ namespace SurveySystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult SubmitSurveyAnswer(SurveyScore surveyscore)
+        public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
         {
             try
             {
-                var score = new SurveyScore
+                // Verileri doğrulama
+                if (!ModelState.IsValid)
                 {
-                    SurveyId = surveyscore.SurveyId, // Anket ID'si
-                    QuestionId = surveyscore.QuestionId, // Soru ID'si
-                    SelectedOption = surveyscore.SelectedOption, // Kullanıcının seçtiği cevap
-                    FirstName = surveyscore.FirstName, // Kullanıcının adı
-                    LastName = surveyscore.LastName, // Kullanıcının soyadı
-                    Score = surveyscore.Score  // Puanlama
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    return Json(new { success = false, errors });
+                }
+
+                // Survey verisini oluşturun
+                var survey = new SurveyScore
+                {
+                    FirstName = surveyScoreData.FirstName,
+                    LastName = surveyScoreData.LastName,
+                    SurveyResponses = surveyScoreData.SurveyResponses,
+                    
                 };
-                _context.Add(surveyscore);
+
+                // Survey verisini veritabanına ekleyin ve kaydedin
+                _context.Add(surveyScoreData);
                 _context.SaveChanges();
                 return Json(new { isSuccess = true, message = "Anket başarıyla cevaplandı." });
-               
+
             }
             catch (Exception ex)
             {
@@ -247,7 +255,7 @@ namespace SurveySystem.Controllers
             }
         }
 
-        
+
 
 
         //public IActionResult AnsweringSurvey(string uniqueId)

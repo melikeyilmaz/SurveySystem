@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurveySystem.Context;
 
@@ -11,9 +12,11 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    partial class SurveyContextModelSnapshot : ModelSnapshot
+    [Migration("20230928203732_InitialSurveyScore")]
+    partial class InitialSurveyScore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -347,37 +350,6 @@ namespace SurveySystem.Migrations
                     b.ToTable("Survey");
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.SurveyResponse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SelectedOption")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SurveyId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SurveyScoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("SurveyId");
-
-                    b.HasIndex("SurveyScoreId");
-
-                    b.ToTable("SurveyResponses");
-                });
-
             modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
                 {
                     b.Property<int>("Id")
@@ -394,13 +366,21 @@ namespace SurveySystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SelectedOption")
                         .HasColumnType("int");
 
                     b.Property<int>("SurveyId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.HasIndex("SurveyId");
 
@@ -501,7 +481,7 @@ namespace SurveySystem.Migrations
                     b.Navigation("Survey");
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.SurveyResponse", b =>
+            modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
                 {
                     b.HasOne("SurveySystem.Models.Question", "Question")
                         .WithMany()
@@ -515,22 +495,7 @@ namespace SurveySystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurveySystem.Models.SurveyScore", null)
-                        .WithMany("SurveyResponses")
-                        .HasForeignKey("SurveyScoreId");
-
                     b.Navigation("Question");
-
-                    b.Navigation("Survey");
-                });
-
-            modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
-                {
-                    b.HasOne("SurveySystem.Models.Survey", "Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Survey");
                 });
@@ -543,11 +508,6 @@ namespace SurveySystem.Migrations
             modelBuilder.Entity("SurveySystem.Models.Survey", b =>
                 {
                     b.Navigation("QuestionResponses");
-                });
-
-            modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
-                {
-                    b.Navigation("SurveyResponses");
                 });
 #pragma warning restore 612, 618
         }
