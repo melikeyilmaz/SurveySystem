@@ -8,6 +8,21 @@
         h4 {
             text-align: center;
         }
+
+        .toast-error {
+            background-color: brown;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: darkorange;
+            color: white;
+        }
+
+        .toast-success {
+            background-color: darkgreen;
+            color: white;
+        }
     </style>
 }
 @section Scripts{
@@ -16,7 +31,7 @@
         var totalCorrectAnswers = 0;
         var totalWrongAnswers = 0;
 
-        var surveyResponses = []; // Soru ve cevapları saklamak için bir dizi oluşturun
+        var SurveyResponses = []; // Soru ve cevapları saklamak için bir dizi oluşturun
         var delayInSeconds = 3; // Soru değişiminde beklemek istediğiniz süre (örneğin, 2 saniye)
         var questionIndex;
 
@@ -53,9 +68,10 @@
                 // Soru ve cevabı diziye ekleyin
                 var questionResponse = {
                     QuestionId: questionId,
-                    SelectedOption: selectedOption
+                    SelectedOption: selectedOption,
+                    SurveyId: parseInt($(".survey-Id[data-surveyId='" + questionIndex + "']").val()),
                 };
-                surveyResponses.push(questionResponse);
+                SurveyResponses.push(questionResponse);
 
 
                 // Belirtilen süre sonunda sıradaki soruyu göster
@@ -79,10 +95,9 @@
                 var surveyScoreData = {
                     FirstName: $("#FirstName").val(),
                     LastName: $("#LastName").val(),
-                    SurveyId: parseInt($(".survey-Id[data-surveyId='" + questionIndex + "']").val()),
-                    TotalCorrectAnswers: totalCorrectAnswers,
-                    TotalWrongAnswers: totalWrongAnswers,
-                    Responses: surveyResponses
+
+                    Score: (totalCorrectAnswers * 10),
+                    SurveyResponses: SurveyResponses
                 };
 
                 $.ajax({
@@ -92,7 +107,7 @@
                     data: (surveyScoreData),
                     success: function (response) {
                         if (response.success) {
-                            toastr.success("Anket kaydedildi.");
+                            toastr.success("Anket başarıyla tamamlandı.");
                             window.location.reload();
                         } else {
                             // Hata oluştuysa hata mesajını işle.
@@ -103,7 +118,7 @@
                         // Hata oluştuysa hata mesajını işle.
                         toastr.error('İstek başarısız.');
                     }
-                });                
+                });
             });
         });
 
@@ -121,7 +136,7 @@
         function showQuestion(index) {
             $(".question").hide();
             $(".question:eq(" + index + ")").show();
-        }                        
+        }
     </script>
 }
 <div class="col-12 grid-margin stretch-card">

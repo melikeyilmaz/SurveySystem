@@ -1,4 +1,7 @@
-﻿namespace SurveySystem.Models
+﻿using System.Reflection;
+using System.Runtime.ConstrainedExecution;
+
+namespace SurveySystem.Models
 {
     public class SurveyScore
     {
@@ -8,13 +11,16 @@
         public int Score { get; set; }
 
         // Foreign Key: Her bir SurveyScore kaydının hangi anketle ilişkilendirildiğini belirtmek için
-        public int SurveyId { get; set; }
+        // Hangi anketle ilişkilendirildiğini belirtmek için
+        //public int RelatedSurveyId { get; set; } 
 
-        // SurveyScore sınıfı ile Survey arasında bir ilişki
-        public Survey Survey { get; set; }
+        // SurveyScore ile Survey arasındaki ilişki
+        //public int SurveyId { get; set; }
+        //public Survey? Survey { get; set; }
 
-        // Birden fazla soru ve seçilen cevapları bu koleksiyon ile tutabilirsiniz.
-        public List<SurveyResponse> SurveyResponses { get; set; }
+        // Her bir SurveyScore kaydının bir veya birden fazla SurveyResponse kaydı olabilir
+        public List<SurveyResponse>? SurveyResponses { get; set; }
+
 
     }
 }

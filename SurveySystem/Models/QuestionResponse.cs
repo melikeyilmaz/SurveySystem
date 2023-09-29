@@ -8,7 +8,7 @@
         public int SelectedOption { get; set; } //Seçilen doğru cevap bilgisi
 
         // 
-        public Question Question { get; set; } // Soru ile ilişkiyi tanımlayın
-        public Survey Survey { get; set; }
+        public Question? Question { get; set; } // Soru ile ilişkiyi tanımlayın
+        public Survey? Survey { get; set; }
     }
 }

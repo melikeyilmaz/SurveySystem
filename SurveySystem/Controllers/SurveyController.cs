@@ -72,7 +72,6 @@ namespace SurveySystem.Controllers
                 {
                     FirstName = surveyData.FirstName,
                     LastName = surveyData.LastName,
-                    SubmissionDate = DateTime.Now,
                     QuestionResponses = surveyData.QuestionResponses,
                     UniqueId = uniqueId // Benzersiz kimliği ankete atayın
                 };
@@ -235,18 +234,19 @@ namespace SurveySystem.Controllers
                 }
 
                 // Survey verisini oluşturun
-                var survey = new SurveyScore
+                var surveyanswer = new SurveyScore
                 {
                     FirstName = surveyScoreData.FirstName,
                     LastName = surveyScoreData.LastName,
                     SurveyResponses = surveyScoreData.SurveyResponses,
-                    
+                    //RelatedSurveyId=surveyScoreData.RelatedSurveyId,
+                    Score = (surveyScoreData.Score), 
                 };
 
                 // Survey verisini veritabanına ekleyin ve kaydedin
-                _context.Add(surveyScoreData);
+                _context.Add(surveyanswer);
                 _context.SaveChanges();
-                return Json(new { isSuccess = true, message = "Anket başarıyla cevaplandı." });
+                return Json(new { success = true, message = "Anket başarıyla cevaplandı." });
 
             }
             catch (Exception ex)

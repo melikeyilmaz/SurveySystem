@@ -12,8 +12,8 @@ using SurveySystem.Context;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(SurveyContext))]
-    [Migration("20230929085427_InitialSurveyResponses")]
-    partial class InitialSurveyResponses
+    [Migration("20230929155515_InitialCreate3")]
+    partial class InitialCreate3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -339,15 +339,12 @@ namespace SurveySystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("SubmissionDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("UniqueId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Survey");
+                    b.ToTable("Surveys");
                 });
 
             modelBuilder.Entity("SurveySystem.Models.SurveyResponse", b =>
@@ -367,7 +364,7 @@ namespace SurveySystem.Migrations
                     b.Property<int>("SurveyId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SurveyScoreId")
+                    b.Property<int>("SurveyScoreId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -400,12 +397,7 @@ namespace SurveySystem.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("SurveyId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("SurveyId");
 
                     b.ToTable("SurveyScores");
                 });
@@ -513,29 +505,22 @@ namespace SurveySystem.Migrations
                         .IsRequired();
 
                     b.HasOne("SurveySystem.Models.Survey", "Survey")
-                        .WithMany()
+                        .WithMany("SurveyResponses")
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurveySystem.Models.SurveyScore", null)
+                    b.HasOne("SurveySystem.Models.SurveyScore", "SurveyScore")
                         .WithMany("SurveyResponses")
-                        .HasForeignKey("SurveyScoreId");
+                        .HasForeignKey("SurveyScoreId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Question");
 
                     b.Navigation("Survey");
-                });
 
-            modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
-                {
-                    b.HasOne("SurveySystem.Models.Survey", "Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Survey");
+                    b.Navigation("SurveyScore");
                 });
 
             modelBuilder.Entity("SurveySystem.Entities.AppUser", b =>
@@ -546,6 +531,8 @@ namespace SurveySystem.Migrations
             modelBuilder.Entity("SurveySystem.Models.Survey", b =>
                 {
                     b.Navigation("QuestionResponses");
+
+                    b.Navigation("SurveyResponses");
                 });
 
             modelBuilder.Entity("SurveySystem.Models.SurveyScore", b =>
