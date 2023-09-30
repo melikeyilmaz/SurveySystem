@@ -45,10 +45,13 @@
                     url: "/Survey/AnsweringSurvey/" + uniqueId,// API URL'nizi buraya ekleyin
                     data: { uniqueId: uniqueId, surveyId: surveyId }, // Parametreleri gönderin
                     success: function (result) {
-                        // Başarılı istek durumunda burada sonuçla ne yapmak istediğinizi belirleyebilirsiniz
-                        // Örneğin, sonucu bir div içine yerleştirebilir veya başka bir işlem yapabilirsiniz
-                        console.log("Başarılı istek sonucu: ", result);
-                        window.location.href = "/Survey/AnsweringSurvey/" + uniqueId;
+                        if (result.error) {
+                            // Özel JSON yanıtında hata varsa
+                            toastr.error(result.error);
+                        } else {
+                            // Anketi başlatma işlemine devam et
+                            window.location.href = "/Survey/AnsweringSurvey/" + uniqueId;
+                        }                       
                     },
                     error: function (error) {
                         toastr.error("Anket için girdiğiniz URL linki hatalı!");                        

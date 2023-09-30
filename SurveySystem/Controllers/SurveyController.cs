@@ -95,74 +95,65 @@ namespace SurveySystem.Controllers
         [HttpGet]
         public IActionResult AnsweringSurvey(string uniqueId, int surveyId)
         {
-            //    var surveyWithQuestions = _context.Surveys
-            //                .Where(survey => survey.UniqueId == uniqueId) // UniqueId'ye göre anketleri seç
-            //                .Include(survey => survey.QuestionResponses) // Her anketin QuestionResponses'larını getir
-            //                    .ThenInclude(response => response.Question) // QuestionResponse içindeki Question'ları getir
-            //                .SelectMany(survey => survey.QuestionResponses, (survey, response) => new
-            //                {
-            //                    Survey = survey,
-            //                    Response = response
-            //                })
-            //                .Select(result => new
-            //                {
-            //                    SurveyId = result.Survey.Id,
-            //                    QuestionText = result.Response.Question.QuestionText,
-            //                    Option1 = result.Response.Question.Option1,
-            //                    Option2 = result.Response.Question.Option2,
-            //                    Option3 = result.Response.Question.Option3,
-            //                    Option4 = result.Response.Question.Option4,
-            //                    Option5 = result.Response.Question.Option5,
-            //                    SelectedOption = result.Response.SelectedOption
-            //                })
-            //                .ToList();
-
-
-
-            //        var surveyWithQuestions = _context.Surveys
-            //.Where(survey => survey.UniqueId == uniqueId) // UniqueId'ye göre anketleri seç
-            //.Include(survey => survey.QuestionResponses) // Her anketin QuestionResponses'larını getir
-            //    .ThenInclude(response => response.Question) // QuestionResponse içindeki Question'ları getir
-            //.Select(survey => new
-            //{
-            //    Survey = survey,
-            //    QuestionResponses = survey.QuestionResponses.Select(response => new
-            //    {
-            //        response.SelectedOption,
-            //        Question = response.Question
-            //    })
-            //})
-            //.ToList();
-
-            var surveyWithQuestions = _context.Surveys
-                            .Where(survey => survey.UniqueId == uniqueId)
-                            //.Where(survey => survey.Id == surveyId)
-                            .Include(survey => survey.QuestionResponses)
-                            .ThenInclude(response => response.Question)
-                            .FirstOrDefault();
-
-            if (surveyWithQuestions != null)
+            try
             {
-                var questions = surveyWithQuestions.QuestionResponses
-                    .Select(response => new Question
-                    {
-                        QuestionText = response.Question.QuestionText,
-                        Option1 = response.Question.Option1,
-                        Option2 = response.Question.Option2,
-                        Option3 = response.Question.Option3,
-                        Option4 = response.Question.Option4,
-                        Option5 = response.Question.Option5,
-                    })
-                    .ToList();
+                // URL'nin hatalı girilip girilmediğini kontrol et
+                if (string.IsNullOrEmpty(uniqueId))
+                {
+                    return Json(new { error = "Geçerli bir URL giriniz." });
+                }
 
-                surveyWithQuestions.Questions = questions;
+                // Veritabanından aynı "SurveyId" ile ilişkilendirilmiş farklı "SurveyScoreId" değerlerini sayın
+                int uniqueSurveyScoreCount = _context.SurveyResponses
+                    .Where(sr => sr.Survey.Id == surveyId)
+                    .Select(sr => sr.SurveyScoreId)
+                    .Distinct() // Tekrarlayanları çıkar
+                    .Count();
+
+                if (uniqueSurveyScoreCount >= 5)
+                {
+                    // Kontenjan doluysa özel bir JSON yanıtı döndürün
+                    return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur." });
+                }
+
+                var surveyWithQuestions = _context.Surveys
+                                .Where(survey => survey.UniqueId == uniqueId)
+                                //.Where(survey => survey.Id == surveyId)
+                                .Include(survey => survey.QuestionResponses)
+                                .ThenInclude(response => response.Question)
+                                .FirstOrDefault();
+                //// Eşleşme kontrolü
+                //if (surveyWithQuestions.UniqueId != uniqueId)
+                //{
+                //    return BadRequest("Hatalı URL: Belirtilen uniqueId ile anket eşleşmiyor.");
+                //}
+
+                if (surveyWithQuestions != null)
+                {
+                    var questions = surveyWithQuestions.QuestionResponses
+                        .Select(response => new Question
+                        {
+                            QuestionText = response.Question.QuestionText,
+                            Option1 = response.Question.Option1,
+                            Option2 = response.Question.Option2,
+                            Option3 = response.Question.Option3,
+                            Option4 = response.Question.Option4,
+                            Option5 = response.Question.Option5,
+                        })
+                        .ToList();
+
+                    surveyWithQuestions.Questions = questions;
+                }
+
+                return View(surveyWithQuestions);
             }
-
-
-            return View(surveyWithQuestions);
+            catch (Exception ex)
+            {
+                // Sunucu tarafında bir hata oluştuğunda bu blok çalışır
+                // Hata yakalandığında özel bir hata mesajı oluşturabilirsiniz
+                return BadRequest("Sunucu hatası: " + ex.Message);
+            }                                 
         }
-
-
 
 
         //[HttpGet]
