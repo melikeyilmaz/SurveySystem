@@ -82,7 +82,7 @@ namespace SurveySystem.Controllers
                 // Oluşturulan benzersiz URL'yi oluşturun
                 string surveyUrl = Url.Action("NonMemberSurvey", "Survey", new { uniqueId });
 
-                return Json(new { success = true, surveyUrl });
+                return Json(new { success = true, surveyUrl , uniqueId });
             }
             catch (Exception ex)
             {
