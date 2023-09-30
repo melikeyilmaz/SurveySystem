@@ -12,13 +12,7 @@ namespace SurveySystem.Controllers
     [AutoValidateAntiforgeryToken] //CSRF (Cross-Site Request Forgery) saldırılarına karşı koruma
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
-
+       
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<AppRole> _roleManager;

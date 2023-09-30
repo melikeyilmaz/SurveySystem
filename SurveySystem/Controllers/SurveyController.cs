@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Context;
 using SurveySystem.Models;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace SurveySystem.Controllers
 {
@@ -240,13 +239,23 @@ namespace SurveySystem.Controllers
                     LastName = surveyScoreData.LastName,
                     SurveyResponses = surveyScoreData.SurveyResponses,
                     //RelatedSurveyId=surveyScoreData.RelatedSurveyId,
-                    Score = (surveyScoreData.Score), 
+                    Score = (surveyScoreData.Score),
+
                 };
+
+
+                //int surveyScoreId = _context.SurveyResponses.FirstOrDefault()?.SurveyScoreId ?? 0;
 
                 // Survey verisini veritabanına ekleyin ve kaydedin
                 _context.Add(surveyanswer);
                 _context.SaveChanges();
-                return Json(new { success = true, message = "Anket başarıyla cevaplandı." });
+                // Eklendikten sonra surveyScoreId'yi alın
+                int surveyScoreId = surveyanswer.Id;
+
+                SurveyScore(surveyScoreId); // SurveyScore işlemini çağır
+                // SurveyScore işlemini çağırmadan önce yönlendirme yapın
+                //return RedirectToAction("SurveyScore", new { surveyScoreId = surveyScoreId });
+                return Json(new { success = true, message = "Anket başarıyla cevaplandı.", surveyScoreId = surveyScoreId });
 
             }
             catch (Exception ex)
@@ -255,6 +264,50 @@ namespace SurveySystem.Controllers
             }
         }
 
+
+        /* surveyResponses üzerinde bir döngü oluşturulur ve her bir anket cevabı için aşağıdaki işlemler yapılır:
+
+        a.question adlı bir değişken oluşturulur ve _context.QuestionResponse.FirstOrDefault metodu kullanılarak belirli bir anket cevabına 
+         karşılık gelen soruyu bulmaya çalışır. Bu, anket cevabının hangi soruya ait olduğunu ve seçilen seçeneğin hangi soru için doğru
+         olduğunu belirlemeye yardımcı olur.Eğer belirtilen koşullara sahip bir soru bulunamazsa, question null olacaktır.
+
+        b.Eğer question null değilse ve anket cevabının seçilen seçeneği ile sorunun seçilen seçeneği aynı ise, bu cevap doğru kabul edilir
+         ve correctResponses değişkeni artırılır.Aksi halde, cevap yanlış kabul edilir ve incorrectResponses değişkeni artırılır. */
+
+        public IActionResult SurveyScore(int surveyScoreId)
+        {
+            //var surveyScoreId =8;
+
+            var surveyResponses = _context.SurveyResponses.Where(sr => sr.SurveyScoreId == surveyScoreId).ToList();
+
+            var correctResponses = 0;
+            var incorrectResponses = 0;
+
+            foreach (var surveyResponse in surveyResponses)
+            {
+                var question = _context.QuestionResponse.FirstOrDefault(qr =>
+                    qr.QuestionId == surveyResponse.QuestionId && qr.SurveyId == surveyResponse.SurveyId);
+
+                if (question != null && surveyResponse.SelectedOption == question.SelectedOption)
+                {
+                    correctResponses++;
+                }
+                else
+                {
+                    incorrectResponses++;
+                }
+            }
+
+            var surveyScore = _context.SurveyScores.FirstOrDefault(ss => ss.Id == surveyScoreId);
+
+            // Eğer surveyScore null ise 0 olarak varsayılan bir değer kullanabilirsiniz.
+            ViewBag.SurveyScore = surveyScore?.Score ?? 0;
+            ViewBag.CorrectResponses = correctResponses;
+            ViewBag.IncorrectResponses = incorrectResponses;
+
+            // return RedirectToAction("SignIn", "Home");
+            return View();
+        }
 
 
 

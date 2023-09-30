@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "SurveyScore";
+    Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
+}
+@section Styles{
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-image: url('/webtheme/Triangle/images/score.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-opacity: 0.5; /* Arka plan resminin saydamlık seviyesini ayarlayın */
+        }
+
+        .stretch-card {
+            background-color: rgba(255, 255, 255, 1); /* Kartın arka plan opaklığını ayarlayın */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+           padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+
+<div class="container">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Anket Sonucu</h4>
+                <p class="card-description">
+                    Ankete zaman ayırıp cevapladığınız için teşekkür ederiz.
+                </p>
+
+                <div class="score">
+                    Ankette @ViewBag.CorrectResponses soruyu doğru cevapladınız.<br>
+                    @ViewBag.IncorrectResponses soruyu yanlış cevapladınız.<br>
+                    Aldığınız toplam puan: @ViewBag.SurveyScore
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* 
+<div class="header">Anketi Tamamladınız!</div>
+<div class="message">Ankete zaman ayırıp cevapladığınız için teşekkür ederiz.</div>
+<div class="score">
+    Ankette 3 soruyu doğru cevapladınız.<br>
+    4 soruyu yanlış cevapladınız.<br>
+    Aldığınız toplam puan: 30
+</div>
+ *@

@@ -108,7 +108,7 @@
                     success: function (response) {
                         if (response.success) {
                             toastr.success("Anket başarıyla tamamlandı.");
-                            window.location.reload();
+                            window.location.href = "/Survey/SurveyScore?surveyScoreId=" + response.surveyScoreId;
                         } else {
                             // Hata oluştuysa hata mesajını işle.
                             toastr.error("Onaylama işlemi başarısız oldu. Hata: " + response.message);
