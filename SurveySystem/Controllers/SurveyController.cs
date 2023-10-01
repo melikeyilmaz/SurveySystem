@@ -1,17 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Context;
+using SurveySystem.Entities;
 using SurveySystem.Models;
+using System.Security.Claims;
 
 namespace SurveySystem.Controllers
 {
     public class SurveyController : Controller
     {
         private readonly SurveyContext _context;
-
-        public SurveyController(SurveyContext context)
+        private readonly UserManager<AppUser> _userManager;
+        public SurveyController(SurveyContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -104,11 +108,16 @@ namespace SurveySystem.Controllers
                 }
 
                 // Veritabanından aynı "SurveyId" ile ilişkilendirilmiş farklı "SurveyScoreId" değerlerini sayın
+                //int uniqueSurveyScoreCount = _context.SurveyResponses
+                //    .Where(sr => sr.Survey.Id == surveyId)
+                //    .Select(sr => sr.SurveyScoreId)
+                //    .Distinct() // Tekrarlayanları çıkar
+                //    .Count();
                 int uniqueSurveyScoreCount = _context.SurveyResponses
-                    .Where(sr => sr.Survey.Id == surveyId)
-                    .Select(sr => sr.SurveyScoreId)
-                    .Distinct() // Tekrarlayanları çıkar
-                    .Count();
+                        .Where(sr => sr.Survey.UniqueId == uniqueId) // UniqueId'ye göre filtrele
+                        .Select(sr => sr.SurveyScoreId)
+                        .Distinct()
+                        .Count();
 
                 if (uniqueSurveyScoreCount >= 5)
                 {
@@ -299,6 +308,58 @@ namespace SurveySystem.Controllers
             // return RedirectToAction("SignIn", "Home");
             return View();
         }
+
+
+
+        // Üye olan kullanıcılar 10 soruluk bir anket oluşturabilir. Bu anketi oluştururken sistemde tanımlı tüm
+        //sorular üzerinden seçim yaparak oluşturabilir.
+
+        //[HttpGet]
+        //public IActionResult MemberSurvey()
+        //{
+        //    var allQuestions = _context.Questions.ToList();
+
+        //    var survey = new Survey
+        //    {
+        //        Questions = allQuestions
+        //    };
+
+        //    return View(survey);
+        //}
+
+        [HttpGet]
+        public IActionResult MemberSurvey()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var loggedInUserId = _userManager.GetUserId(User);
+                var user = _userManager.FindByIdAsync(loggedInUserId).Result;
+
+                if (user != null)
+                {
+                    var firstName = user.FirstName;
+                    var lastName = user.LastName;
+
+                    // Kullanıcı adı ve soyadını ViewBag ile görünüme gönderin
+                    ViewBag.FirstName = firstName;
+                    ViewBag.LastName = lastName;
+                }
+            }
+
+            var allQuestions = _context.Questions.ToList();
+
+            var survey = new Survey
+            {
+                Questions = allQuestions
+            };
+
+            return View(survey);
+        }
+
+
+
+
+
 
 
 
