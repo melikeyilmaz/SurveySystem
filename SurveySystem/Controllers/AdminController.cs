@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SurveySystem.Context;
 using SurveySystem.Entities;
 using SurveySystem.Models;
+using X.PagedList;
 
 namespace SurveySystem.Controllers
 {
@@ -23,19 +24,7 @@ namespace SurveySystem.Controllers
         {
             return View();
         }
-
-        // Soru ekleme formunu kullanarak bir POST işlemi
-        //[HttpPost]
-        //public IActionResult AddQuestion(Question model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(model);
-        //        _context.SaveChanges();
-        //        return RedirectToAction("QuestionList");
-        //    }
-        //    return View(model);
-        //}
+ 
 
         //[HttpPost]
         //[Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
@@ -101,7 +90,7 @@ namespace SurveySystem.Controllers
 
                     _context.Add(model);
                     _context.SaveChanges();
-                    return RedirectToAction("QuestionList");
+                    return RedirectToAction("AddQuestion","Admin");
                 }
                 else
                 {
@@ -125,16 +114,28 @@ namespace SurveySystem.Controllers
             return View(model);
         }
 
+
         [Authorize(Roles = "Admin")] // Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
-        public IActionResult QuestionList()
+        public IActionResult QuestionList(int page=1)
         {
-            var approvedQuestions = _context.Questions
-                         .Where(q => q.ApprovalStatus == ApprovalStatus.Approved) // Sadece Onaylanmış soruları listele.
-                         .OrderByDescending(q => q.Id)
-                         .ToList();
+            
+            
+            int pageSize = 10; // Her sayfada gösterilecek soru sayısını belirleyin.
+
+            IPagedList<Question> approvedQuestions = _context.Questions
+                .Where(q => q.ApprovalStatus == ApprovalStatus.Approved) // Sadece Onaylanmış soruları listele.
+                .OrderByDescending(q => q.Id)
+                .ToPagedList(page, pageSize); // Sayfa numarası ve sayfa boyutunu belirleyin.
 
             return View(approvedQuestions);
+
+            //var approvedQuestions = _context.Questions
+            //             .Where(q => q.ApprovalStatus == ApprovalStatus.Approved) // Sadece Onaylanmış soruları listele.
+            //             .OrderByDescending(q => q.Id)
+            //             .ToList();
+
+            //return View(approvedQuestions);
         }    
 
 
