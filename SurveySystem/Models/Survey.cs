@@ -27,10 +27,13 @@ namespace SurveySystem.Models
         // Birden fazla soru ve seçilen cevapları bu koleksiyon ile tutabilirsiniz.
         public List<SurveyResponse>? SurveyResponses { get; set; }
 
+        // Üye olma durumu (bool)
+        public bool IsMember { get; set; } 
+
         //// Her bir ankete ait sonuç
         //public List<SurveyScore>? SurveyScores { get; set; }
 
-        
+
         //public int Id { get; set; }
 
         //[Required(ErrorMessage = "Ad gereklidir.")]

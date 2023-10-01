@@ -76,8 +76,11 @@
                 </a>
                 <div class="collapse" id="auth">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="/Survey/MemberSurvey">Anket Oluşturma </a></li>
-
+                        @if (User != null && User.IsInRole("Member"))
+                        {
+                            <li class="nav-item"> <a class="nav-link" href="/Survey/MemberSurvey">Anket Oluşturma </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="/Survey/SurveyLink">Anket'e Giriş</a></li>
+                        }
                     </ul>
                 </div>
             </li>
