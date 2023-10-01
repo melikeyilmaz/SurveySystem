@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Context;
@@ -22,7 +23,10 @@ namespace SurveySystem.Controllers
         public IActionResult NonMemberSurvey()
         {
             var random = new Random();
-            var allQuestions = _context.Questions.ToList();
+            // Sadece Onaylanan soruları seçmek için filtreleme yapın
+            var allQuestions = _context.Questions
+                                .Where(q => q.ApprovalStatus == ApprovalStatus.Approved)
+                                .ToList();
 
             var selectedQuestions = new List<Question>();
 
@@ -400,6 +404,7 @@ namespace SurveySystem.Controllers
 
         /* Üye olan kullanıcılar 10 soruluk bir anket oluşturabilir. Bu anketi oluştururken sistemde tanımlı tüm
         sorular üzerinden seçim yaparak oluşturabilir.*/
+        [Authorize(Roles = "Member")]
         [HttpGet]
         public IActionResult MemberSurvey()
         {
@@ -419,7 +424,10 @@ namespace SurveySystem.Controllers
                 }
             }
 
-            var allQuestions = _context.Questions.ToList();
+            // Sadece Onaylanan soruları seçmek için filtreleme yapın
+            var allQuestions = _context.Questions
+                               .Where(q => q.ApprovalStatus == ApprovalStatus.Approved)
+                               .ToList();
 
             var survey = new Survey
             {
@@ -428,12 +436,6 @@ namespace SurveySystem.Controllers
 
             return View(survey);
         }
-
-
-
-
-
-
 
 
         //public IActionResult AnsweringSurvey(string uniqueId)
@@ -489,93 +491,6 @@ namespace SurveySystem.Controllers
         //    {
         //        return Json(new { success = false, message = ex.Message });
         //    }
-        //}
-
-
-
-        //public IActionResult SaveSurvey(Survey surveyData)
-        //{
-        //    try
-        //    {
-        //        // Verileri doğrulama
-        //        if (!ModelState.IsValid)
-        //        {
-        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        //            return Json(new { success = false, errors });
-        //        }
-
-        //        // Survey verisini oluşturun
-        //        var survey = new Survey
-        //        {
-        //            FirstName = surveyData.FirstName,
-        //            LastName = surveyData.LastName,
-        //            SubmissionDate = DateTime.Now,
-        //            QuestionResponses = surveyData.QuestionResponses // Birden fazla soru ve cevapları buraya ekleyin
-        //        };
-
-        //        // Survey verisini veritabanına ekleyin ve kaydedin
-        //        _context.Surveys.Add(survey);
-        //        _context.SaveChanges();
-
-        //        return Json(new { success = true });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}
-
-
-
-
-        //public IActionResult SaveSurvey(Survey surveyData)
-        //{
-        //    try
-        //    {
-        //        // Verileri doğrulama
-        //        if (!ModelState.IsValid)
-        //        {
-        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        //            return Json(new { success = false, errors });
-        //        }
-
-        //        // Sistemde tanımlı olan 10 soruyu alın
-        //        var allQuestions = _context.Questions.ToList();
-
-        //        // Kullanıcının seçtiği soruları kontrol et
-        //        if (surveyData.QuestionResponses == null || surveyData.QuestionResponses.Count != 4)
-        //        {
-        //            return Json(new { success = false, message = "Üye olmayan kullanıcılar 4 soruluk bir anket oluşturabilir!" });
-        //        }
-
-        //        foreach (var selectedQuestion in surveyData.QuestionResponses)
-        //        {
-        //            if (!allQuestions.Any(q => q.Id == selectedQuestion.QuestionId))
-        //            {
-        //                return Json(new { success = false, message = "Geçersiz soru seçildi." });
-        //            }
-        //        }
-
-        //        // Survey verisini oluşturun
-        //        var survey = new Survey
-        //        {
-        //            FirstName = surveyData.FirstName,
-        //            LastName = surveyData.LastName,
-        //            SubmissionDate = DateTime.Now,
-        //            QuestionResponses = surveyData.QuestionResponses
-        //        };
-
-        //        // Survey verisini veritabanına ekleyin ve kaydedin
-        //        _context.Surveys.Add(survey);
-        //        _context.SaveChanges();
-
-        //        return Json(new { success = true });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}
-
+        //}       
     }
 }

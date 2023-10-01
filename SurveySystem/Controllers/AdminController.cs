@@ -129,11 +129,12 @@ namespace SurveySystem.Controllers
         [HttpGet]
         public IActionResult QuestionList()
         {
-            var questions = _context.Questions
-                        .OrderByDescending(e => e.Id)
-                        .ToList();
+            var approvedQuestions = _context.Questions
+                         .Where(q => q.ApprovalStatus == ApprovalStatus.Approved) // Sadece Onaylanmış soruları listele.
+                         .OrderByDescending(q => q.Id)
+                         .ToList();
 
-            return View(questions);
+            return View(approvedQuestions);
         }    
 
 

@@ -145,7 +145,7 @@ namespace SurveySystem.Controllers
 
                     if (roles.Contains("Admin"))
                     {
-                        return RedirectToAction("AddQuestion", "Admin");
+                        return RedirectToAction("QuestionList", "Admin");
                     }
                     else
                     {

@@ -67,7 +67,8 @@
                     </ul>
                 </div>
             </li>
-
+            @if (User != null && User.IsInRole("Member"))
+            {
             <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
                     <i class="mdi mdi-format-list-numbers menu-icon"></i>
@@ -75,15 +76,13 @@
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
-                        @if (User != null && User.IsInRole("Member"))
-                        {
+                    <ul class="nav flex-column sub-menu">                        
                             <li class="nav-item"> <a class="nav-link" href="/Survey/MemberSurvey">Anket Oluşturma </a></li>
-                            <li class="nav-item"> <a class="nav-link" href="/Survey/SurveyLink">Anket'e Giriş</a></li>
-                        }
+                            <li class="nav-item"> <a class="nav-link" href="/Survey/SurveyLink">Anket'e Giriş</a></li>                        
                     </ul>
                 </div>
             </li>
+            }
             <li class="nav-item">
                 <a class="nav-link" href="/Home/SignOut">
                     <i class="mdi mdi-logout menu-icon"></i>
