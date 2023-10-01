@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SurveySystem.Context;
 using SurveySystem.Entities;
 using SurveySystem.Models;
+using System.Drawing.Printing;
 using X.PagedList;
 
 namespace SurveySystem.Controllers
@@ -118,8 +119,7 @@ namespace SurveySystem.Controllers
         [Authorize(Roles = "Admin")] // Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
         public IActionResult QuestionList(int page=1)
-        {
-            
+        {           
             
             int pageSize = 10; // Her sayfada gösterilecek soru sayısını belirleyin.
 
@@ -212,18 +212,30 @@ namespace SurveySystem.Controllers
 
         [Authorize(Roles = "Member")]
         [HttpGet]
-        public IActionResult MyQuestionList()
+        public IActionResult MyQuestionList(int page = 1)
         {
+            int pageSize = 10;
             // Kullanıcının kimliğini al.
             var userId = _userManager.GetUserId(User);
 
             // Kullanıcının eklediği soruları filtreleyerek al.
-            var userQuestions = _context.Questions
+            IPagedList<Question> userQuestions = _context.Questions
                 .Where(q => q.UserId == int.Parse(userId))
                 .OrderByDescending(q => q.Id)
-                .ToList();
+                .ToPagedList(page, pageSize);
 
             return View(userQuestions);
+
+            //// Kullanıcının kimliğini al.
+            //var userId = _userManager.GetUserId(User);
+
+            //// Kullanıcının eklediği soruları filtreleyerek al.
+            //var userQuestions = _context.Questions
+            //    .Where(q => q.UserId == int.Parse(userId))
+            //    .OrderByDescending(q => q.Id)
+            //    .ToList();
+
+            //return View(userQuestions);
         }
 
     }

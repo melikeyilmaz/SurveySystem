@@ -1,4 +1,10 @@
-﻿@model IEnumerable<SurveySystem.Models.Question>
+﻿@* @model IEnumerable<SurveySystem.Models.Question> *@
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@model IPagedList<Question>
+<link rel="stylesheet" href="~/css/PageList.css" />
 @{
     ViewData["Title"] = "MyQuestionList";
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
@@ -76,7 +82,10 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+            @Html.PagedListPager(Model,
+            page=>Url.Action("QuestionList", new {page}),
+            new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
+        </div>       
     </div>
 </div>
 

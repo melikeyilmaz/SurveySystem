@@ -135,9 +135,9 @@
                     </tbody>
                 </table>
             </div>
-            @Html.PagedListPager(Model,
-            page=>Url.Action("QuestionList", new {page}),
-            new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
+             @Html.PagedListPager(Model,
+        page=>Url.Action("QuestionList", new {page}),
+        new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
         </div>       
     </div>
 
