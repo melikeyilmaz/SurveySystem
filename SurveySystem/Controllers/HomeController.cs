@@ -117,9 +117,8 @@ namespace SurveySystem.Controllers
 
 
         [HttpGet]
-        public IActionResult SignIn(string returnUrl)
+        public IActionResult SignIn()
         {
-            //var model = new UserSignInModel { ReturnUrl = returnUrl };
             var model = new UserSignInModel();
             return View(model);
         }
@@ -131,16 +130,18 @@ namespace SurveySystem.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError("UserNotFound", "Bu e-posta adresine kayıtlı bir kullanıcı yoktur.");
+                    return View(model);
+                }
+
                 //Bir SignIn işleminin sonucu bir tane olabilir.
-                var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
-                
+                var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);               
 
                 if (signInResult.Succeeded)
                 {
-                    //if (!string.IsNullOrWhiteSpace(model.ReturnUrl))
-                    //{
-                    //    return Redirect(model.ReturnUrl);
-                    //}
                     var roles = await _userManager.GetRolesAsync(user);
 
                     if (roles.Contains("Admin"))
@@ -152,7 +153,7 @@ namespace SurveySystem.Controllers
                         return RedirectToAction("AddQuestion", "Admin");
                     }
                 }
-                ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı");
+                ModelState.AddModelError("SignInError", "Kullanıcı adı veya şifre hatalı.");
 
             }
             return View(model);

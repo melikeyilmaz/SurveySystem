@@ -19,6 +19,10 @@
                             <h4>Hoşgeldiniz!</h4>
                             <h6 class="font-weight-light">Seni tekrar gördüğüme sevindim!</h6>
                             <form asp-action="SignIn" method="post" class="pt-3">
+                                <!-- Kullanıcı bulunamadığında gösterilecek uyarı -->
+                                <div class="text-danger">@Html.ValidationMessage("UserNotFound")</div>
+                                <!-- Kullanıcı adı veya şifre yanlış girildiğinde gösterilecek uyarı -->
+                                <div class="text-danger">@Html.ValidationMessage("SignInError")</div>
                                 <div class="form-group">
                                     <label asp-for="Email">E-posta Adresi:</label>
                                     <div class="input-group">
@@ -27,10 +31,11 @@
                                                 <i class="mdi mdi-account-outline text-primary"></i>
                                             </span>
                                         </div>
-                                        <input asp-for="Email" type="text" class="form-control form-control-lg border-left-0" placeholder="E-posta Adresi">
-                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                        <input asp-for="Email" type="text" class="form-control form-control-lg border-left-0" placeholder="E-posta Adresi">                                       
                                     </div>
                                 </div>
+                                <!-- E-posta girilmediğinde gösterilecek uyarı -->
+                                <span asp-validation-for="Email" class="text-danger"></span>
                                 <div class="form-group">
                                     <label asp-for="Password">Şifre</label>
                                     <div class="input-group">
@@ -40,9 +45,11 @@
                                             </span>
                                         </div>
                                         <input asp-for="Password" type="password" class="form-control form-control-lg border-left-0" placeholder="Şifre">
-                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                       
                                     </div>
                                 </div>
+                                <!-- Şifre girilmediğinde gösterilecek uyarı -->
+                                <span asp-validation-for="Password" class="text-danger"></span>
                                 <div class="my-2 d-flex justify-content-between align-items-center">
                                     <div class="form-check">
                                         <label asp-for="RememberMe" class="form-check-label text-muted">
