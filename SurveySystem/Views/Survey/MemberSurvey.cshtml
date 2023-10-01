@@ -9,30 +9,24 @@
             font-size: 14px;
             padding: 5px 10px;
         }
-
         .toast-error {
             background-color: brown;
             color: white;
         }
-
         .toast-warning {
             background-color: darkorange;
             color: white;
         }
-
         .toast-success {
             background-color: darkgreen;
             color: white;
         }
-
         #guidDiv span {
             color: red; /* Kırmızı renk */
             font-weight: bold; /* Kalın metin */
         }
-
     </style>
 }
-
 
 @section Scripts{
     <script type="text/javascript">
@@ -59,16 +53,10 @@
                 }
             });
 
-            $(".btnsurvey").click(function () {
+            $(".btnMemberSurvey").click(function () {
                 // Ad ve soyadı al
                 surveyData.FirstName = $("#FirstName").val();
                 surveyData.LastName = $("#LastName").val();
-
-                // Ad ve soyadı inputlarını kontrol et
-                if (surveyData.FirstName == "" || surveyData.LastName == "") {
-                    toastr.warning("Ad ve Soyad boş bırakılamaz!");
-                    return; // Boş inputlar varsa işlemi durdur
-                }
 
                 // Soru ve cevapları toplamak için bir dizi oluştur
                 var questionResponses = [];
@@ -91,19 +79,16 @@
                     }
                 });
 
-                if (selectedQuestionCount == 4) { // Kullanıcının tam olarak 4 soru seçmesi gerekir.
+                if (selectedQuestionCount == 10) { // Üye Kullanıcının tam olarak 10 soru seçmesi gerekir.
                     // Toplanan soru-cevap çiftlerini surveyData'ya ata
                     surveyData.QuestionResponses = questionResponses;
 
                     // Kaydetme işlemi.
                     saveSurveyData();
                 } else {
-                    toastr.warning("Üye olmayan kullanıcılar tam olarak 4 soru seçmelidir!");
+                    toastr.warning("Üye kullanıcılar tam olarak 10 soru seçmelidir!");
                 }
             });
-
-
-
         });
 
         function showQuestion(index) {
@@ -121,12 +106,10 @@
             showQuestion(currentQuestionIndex);
         }
 
-        function saveSurveyData() {
-            // Diğer işlemleri burada yapabilirsiniz, kaydetme işlemi vb.
+        function saveSurveyData() {            
             $.ajax({
                 url: "/Survey/SaveSurvey",
-                type: "POST",
-                // contentType: "application/json; charset=utf-8",
+                type: "POST",               
                 data: (surveyData),
                 success: function (response) {
                     if (response.success) {
@@ -140,9 +123,8 @@
 
                         // Kartı görünür hale getir
                         cardDiv.show();
-
-                        toastr.success("Anket kaydedildi.");
-                        //window.location.reload();
+                        toastr.success("Anket kaydedildi.");    
+                        
                     } else {
                         // Hata oluştuysa hata mesajını işle.
                         toastr.error("Onaylama işlemi başarısız oldu. Hata: " + response.message);
@@ -157,13 +139,10 @@
     </script>
 }
 
-
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Oluşturma</h4>
-            @* <form id="surveyForm" asp-action="NonMemberSurvey" method="post"> *@
-            <!-- Formun POST isteği gönderdiği bir endpoint belirtmelisiniz. -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -225,7 +204,7 @@
             }
             <button type="button" class="btn btn-info btn-icon-text mt-3" id="prevButton" onclick="navigate(-1)">Önceki Soru<i class="mdi mdi-arrow-left-bold btn-icon-append"></i></button>
             <button type="button" class="btn btn-info btn-icon-text mt-3" id="nextButton" onclick="navigate(1)"><i class="mdi mdi-arrow-right-bold btn-icon-prepend"></i>Sonraki Soru</button>
-            <button type="button" class="btn btn-success btn-icon-text mt-3 btnsurvey"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Oluştur</button>
+            <button type="button" class="btn btn-success btn-icon-text mt-3 btnMemberSurvey"><i class="mdi mdi-book-plus btn-icon-prepend"></i>Anketi Oluştur</button>
         </div>
     </div>
 </div>

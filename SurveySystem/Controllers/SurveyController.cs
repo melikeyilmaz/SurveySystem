@@ -340,7 +340,7 @@ namespace SurveySystem.Controllers
                     var firstName = user.FirstName;
                     var lastName = user.LastName;
 
-                    // Kullanıcı adı ve soyadını ViewBag ile görünüme gönderin
+                    // Kullanıcı adı ve soyadını ViewBag ile görünüme gönder.
                     ViewBag.FirstName = firstName;
                     ViewBag.LastName = lastName;
                 }
