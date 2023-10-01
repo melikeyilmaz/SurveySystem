@@ -125,7 +125,7 @@ namespace SurveySystem.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin, Member")] // Soruların bir listesini görüntülemek için kullanılır.
+        [Authorize(Roles = "Admin")] // Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
         public IActionResult QuestionList()
         {

@@ -104,6 +104,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Eriþim reddedildiðinde kullanýcýyý /Home/SignIn sayfasýna yönlendir
+app.UseStatusCodePagesWithRedirects("/Home/SignIn");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
