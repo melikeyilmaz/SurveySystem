@@ -3,8 +3,7 @@
 namespace SurveySystem.Models
 {
     public class UserCreateModel
-    {
-        //[Required(ErrorMessage = "Kullanıcı adı-soyadı girilmesi zorunludur.")]
+    {        
         public string? UserName { get; set; }        
 
         [EmailAddress(ErrorMessage = "Lütfen geçerli bir email formatı giriniz.")]
@@ -15,6 +14,7 @@ namespace SurveySystem.Models
         public string Password { get; set; }
 
         [Compare("Password",ErrorMessage ="Şifreler eşleşmiyor.")]
+        [Required(ErrorMessage = "Şifre tekrar girilmesi zorunludur.")]
         public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Kullanıcı adı girilmesi zorunludur.")]

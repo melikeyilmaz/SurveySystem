@@ -34,44 +34,7 @@ namespace SurveySystem.Controllers
         {
             var model = new UserCreateModel();
             return View(model);
-        }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(UserCreateModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        AppUser user = new()
-        //        {
-        //            Email = model.Email,
-        //            UserName = model.UserName
-        //        };
-
-        //        var identityResult = await _userManager.CreateAsync(user, model.Password);
-        //        if (identityResult.Succeeded)
-        //        {
-        //            var memberRole = await _roleManager.FindByNameAsync("Member");
-        //            if (memberRole == null)
-        //            {
-        //                //Kullanıcı kayıt işlemi sırasında rol ataması.
-        //                await _roleManager.CreateAsync(new()
-        //                {
-        //                    Name = "Member",
-        //                    CreatedTime = DateTime.Now,
-        //                });
-        //            }
-
-        //            await _userManager.AddToRoleAsync(user, "Member");
-        //            return RedirectToAction("Index");
-        //        }
-        //        foreach (var error in identityResult.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-        //    }
-        //    return View(model);
-        //}
+        }           
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -85,8 +48,8 @@ namespace SurveySystem.Controllers
                     // Kullanıcı adını e-posta ile doldurun, ancak boş veya null ise e-posta adresini kullanılır.
                     UserName = string.IsNullOrWhiteSpace(model.UserName) ? model.Email : model.UserName,
                     //UserName = model.Email, // Kullanıcı adı olarak e-posta kullanabilirsiniz veya farklı bir değer atayabilirsiniz.
-                    FirstName = model.FirstName, // Ad alanını ayarlayın
-                    LastName = model.LastName,   // Soyad alanını ayarlayın
+                    FirstName = model.FirstName, 
+                    LastName = model.LastName,   
                 };
 
                 var identityResult = await _userManager.CreateAsync(user, model.Password);
