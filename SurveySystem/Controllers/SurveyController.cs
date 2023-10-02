@@ -79,6 +79,7 @@ namespace SurveySystem.Controllers
                 {
                     FirstName = surveyData.FirstName,
                     LastName = surveyData.LastName,
+                    SurveyTitle = surveyData.SurveyTitle,
                     QuestionResponses = surveyData.QuestionResponses,
                     UniqueId = uniqueId, // Benzersiz kimliği ankete atayın
                     IsMember = surveyData.IsMember

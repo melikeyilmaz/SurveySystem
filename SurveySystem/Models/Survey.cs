@@ -14,6 +14,7 @@ namespace SurveySystem.Models
 
         [Required(ErrorMessage = "Soyad gereklidir.")]
         public string LastName { get; set; }
+        public string SurveyTitle { get; set; }
 
         // Birden fazla soru ve seçilen cevapları bu koleksiyon ile tutabilirsiniz.
         public List<QuestionResponse>? QuestionResponses { get; set; }

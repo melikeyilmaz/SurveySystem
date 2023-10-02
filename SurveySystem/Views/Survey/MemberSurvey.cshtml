@@ -35,6 +35,7 @@
         var surveyData = {
             FirstName: "",
             LastName: "",
+            SurveyTitle: "",
             IsMember: true,
             QuestionResponses: []
         };
@@ -58,6 +59,7 @@
                 // Ad ve soyadı al
                 surveyData.FirstName = $("#FirstName").val();
                 surveyData.LastName = $("#LastName").val();
+                surveyData.SurveyTitle = $("#SurveyTitle").val();
 
                 // Soru ve cevapları toplamak için bir dizi oluştur
                 var questionResponses = [];
@@ -144,6 +146,10 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Oluşturma</h4>
+            <div class="form-group">
+                <label asp-for="SurveyTitle">Anket Başlığı</label>
+                <input asp-for="SurveyTitle" type="text" class="form-control" id="SurveyTitle" name="SurveyTitle" placeholder="Anket Başlığını Giriniz">
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
