@@ -19,52 +19,14 @@ namespace SurveySystem.Controllers
             _context = context;
             _userManager = userManager;
         }
+
         //Soru ekleme formunu göstermek için bir GET işlemi
         [HttpGet]
         public IActionResult AddQuestion()
         {
             return View();
         }
- 
 
-        //[HttpPost]
-        //[Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
-        //public IActionResult AddQuestion(Question model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Kullanıcı oturum açmış mı kontrol edin
-        //        if (User.Identity.IsAuthenticated)
-        //        {
-        //            // Kullanıcı kimliğini alın
-        //            var userId = _userManager.GetUserId(User);
-
-        //            // Kullanıcı admin ise, eklenen soruyu otomatik olarak onayla.
-        //            if (User.IsInRole("Admin"))
-        //            {
-        //                model.IsApproved = true; // Admin eklediği için onaylandı olarak işaretle.
-        //            }
-        //            else
-        //            {
-        //                // Üye eklediyse, onay bekleme durumunda bırak.
-        //                model.IsApproved = false;
-        //            }
-
-        //            // Soru ekleyen kullanıcının kimliğini modeldeki UserId alanına atamamıza gerek yok.
-        //            // Kimlik doğrulama işlemleri otomatik olarak kullanıcı kimliğini sağlar.
-
-        //            _context.Add(model);
-        //            _context.SaveChanges();
-        //            return RedirectToAction("QuestionList");
-        //        }
-        //        else
-        //        {
-        //            // Kullanıcı oturum açmamışsa, oturum açma sayfasına yönlendir.
-        //            return RedirectToAction("SignIn", "Home");
-        //        }
-        //    }
-        //    return View(model);
-        //}
 
         [HttpPost]
         [Authorize(Roles = "Admin, Member")] // Admin ve Member rolüne sahip kullanıcılar bu işlemi yapabilir
@@ -139,7 +101,7 @@ namespace SurveySystem.Controllers
         }    
 
 
-        [HttpPost] // Bu eylem, kullanıcının silme işlemini onayladığı zaman çalışır.       
+        [HttpPost] // Bu eylem, admin silme işlemini onayladığı zaman çalışır.       
         public IActionResult DeleteQuestion(int id)
         {
             try
@@ -165,15 +127,25 @@ namespace SurveySystem.Controllers
 
         [Authorize(Roles = "Admin")] // Onay Bekleyen Soruların bir listesini görüntülemek için kullanılır.
         [HttpGet]
-        public IActionResult UnApprovedQuestions()
+        public IActionResult UnApprovedQuestions(int page = 1)
         {
-            var unapprovedQuestions = _context.Questions
+            int pageSize = 10;
+
+            IPagedList<Question> unapprovedQuestions = _context.Questions
                         .Where(q => q.ApprovalStatus == ApprovalStatus.PendingApproval) // Onay bekleyen soruları seç
                         .OrderByDescending(q => q.Id)
-                        .ToList();
+                        .ToPagedList(page, pageSize);
 
             return View(unapprovedQuestions);
+
+            //var unapprovedQuestions = _context.Questions
+            //            .Where(q => q.ApprovalStatus == ApprovalStatus.PendingApproval) // Onay bekleyen soruları seç
+            //            .OrderByDescending(q => q.Id)
+            //            .ToList();
+
+            //return View(unapprovedQuestions);
         }
+
 
         [Authorize(Roles = "Admin")] // Sadece Admin rolüne sahip kullanıcılar bu işlemi yapabilir
         [HttpPost]

@@ -1,9 +1,16 @@
-﻿@model IEnumerable<SurveySystem.Models.Question>
+﻿@* @model IEnumerable<SurveySystem.Models.Question> *@
+
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@model IPagedList<Question>
 @{
     ViewData["Title"] = "UnApprovedQuestions";
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
 }
 @section Styles{
+    <link rel="stylesheet" href="~/css/PageList.css" />
     <style>
         .btn {
             font-size: 14px;
@@ -152,6 +159,9 @@
                     </tbody>
                 </table>
             </div>
+            @Html.PagedListPager(Model,
+            page=>Url.Action("QuestionList", new {page}),
+            new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
         </div>
     </div>
 </div>
