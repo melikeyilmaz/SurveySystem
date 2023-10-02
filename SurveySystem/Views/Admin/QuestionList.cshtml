@@ -51,7 +51,7 @@
                         toastr.error('İstek başarısız. Hata: ' + error);
                     }
                 });
-            });      
+            });
         });
     </script>
 
@@ -60,7 +60,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">Soru Havuzu</h4>           
+            <h4 class="card-title">Soru Havuzu</h4>
             <p class="card-description">
                 <a href="/Admin/AddQuestion" class="btn btn-success">Yeni Soru Ekle</a>
             </p>
@@ -86,7 +86,10 @@
                             <th>
                                 Seçenek 5
                             </th>
-                            <th></th>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <th></th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -111,34 +114,23 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Option5)
                                 </td>
-                                <td>
-                                   @*  <form method="get" asp-controller="Admin" asp-action="Delete">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button class="btn btn-danger" type="submit">Sil</button>
-                                    </form> *@
-
-                                    @* <form method="get" asp-controller="Admin" asp-action="Delete">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button class="btn btn-danger delete-button" data-toggle="modal" data-target="#deleteModal" data-id="@item.Id">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <td>
+                                        <button class="btn btn-danger delete-button" data-id="@item.Id">
                                             Sil
                                         </button>
-                                    </form>
-                                    *@
-                                   
-                                    <button class="btn btn-danger delete-button" data-id="@item.Id">
-                                        Sil
-                                    </button>
-                                  
-                                </td>
+                                    </td>
+                                }
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
-             @Html.PagedListPager(Model,
-        page=>Url.Action("QuestionList", new {page}),
-        new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
-        </div>       
+            @Html.PagedListPager(Model,
+            page=>Url.Action("QuestionList", new {page}),
+            new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
+        </div>
     </div>
 
     <!-- Modal -->

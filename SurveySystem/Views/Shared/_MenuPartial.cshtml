@@ -53,13 +53,13 @@
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
+                    <ul class="nav flex-column sub-menu">                        
+                        <li class="nav-item"> <a class="nav-link" href="/Admin/AddQuestion"> Yeni Soru Ekle </a></li>
+                        <li class="nav-item"> <a class="nav-link" href="/Admin/QuestionList"> Soru Havuzu </a></li>
                         @if (User != null && User.IsInRole("Admin"))
                         {
-                            <li class="nav-item"> <a class="nav-link" href="/Admin/QuestionList"> Soru Havuzu </a></li>
                             <li class="nav-item"> <a class="nav-link" href="/Admin/UnApprovedQuestions"> Onay Bekleyen Sorular </a></li>
                         }
-                        <li class="nav-item"> <a class="nav-link" href="/Admin/AddQuestion"> Yeni Soru Ekle </a></li>
                         @if (User != null && User.IsInRole("Member"))
                         {
                             <li class="nav-item"> <a class="nav-link" href="/Admin/MyQuestionList"> Onay Bekleyen Sorularım </a></li>
