@@ -9,6 +9,8 @@ namespace SurveySystem.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int Score { get; set; }
+        public int CorrectAnswers { get; set; }
+        public int IncorrectAnswers { get; set; }
 
         // Foreign Key: Her bir SurveyScore kaydının hangi anketle ilişkilendirildiğini belirtmek için
         // Hangi anketle ilişkilendirildiğini belirtmek için

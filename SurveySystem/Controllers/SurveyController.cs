@@ -91,7 +91,7 @@ namespace SurveySystem.Controllers
                 // Oluşturulan benzersiz URL'yi oluşturun
                 string surveyUrl = Url.Action("NonMemberSurvey", "Survey", new { uniqueId });
 
-                return Json(new { success = true, surveyUrl , uniqueId });
+                return Json(new { success = true, surveyUrl, uniqueId });
             }
             catch (Exception ex)
             {
@@ -121,12 +121,12 @@ namespace SurveySystem.Controllers
 
                 //if (!User.Identity.IsAuthenticated)
                 //{
-                    // Üye olmayan kullanıcı işlemleri
-                    if (uniqueSurveyScoreCount >= 5)
-                    {
-                        // Kontenjan doluysa özel bir JSON yanıtı döndürün
-                        return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur." });
-                    }
+                // Üye olmayan kullanıcı işlemleri
+                if (uniqueSurveyScoreCount >= 5)
+                {
+                    // Kontenjan doluysa özel bir JSON yanıtı döndürün
+                    return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur." });
+                }
                 //}
 
                 var surveyWithQuestions = _context.Surveys
@@ -295,6 +295,50 @@ namespace SurveySystem.Controllers
 
         }
 
+        //[HttpPost]
+        //public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
+        //{
+        //    try
+        //    {
+        //        // Verileri doğrulama
+        //        if (!ModelState.IsValid)
+        //        {
+        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        //            return Json(new { success = false, errors });
+        //        }
+
+        //        // Survey verisini oluşturun
+        //        var surveyanswer = new SurveyScore
+        //        {
+        //            FirstName = surveyScoreData.FirstName,
+        //            LastName = surveyScoreData.LastName,
+        //            SurveyResponses = surveyScoreData.SurveyResponses,
+        //            //RelatedSurveyId=surveyScoreData.RelatedSurveyId,
+        //            Score = (surveyScoreData.Score),
+
+        //        };
+
+
+        //        //int surveyScoreId = _context.SurveyResponses.FirstOrDefault()?.SurveyScoreId ?? 0;
+
+        //        // Survey verisini veritabanına ekleyin ve kaydedin
+        //        _context.Add(surveyanswer);
+        //        _context.SaveChanges();
+        //        // Eklendikten sonra surveyScoreId'yi alın
+        //        int surveyScoreId = surveyanswer.Id;
+
+        //        SurveyScore(surveyScoreId); // SurveyScore işlemini çağır
+        //        // SurveyScore işlemini çağırmadan önce yönlendirme yapın
+        //        //return RedirectToAction("SurveyScore", new { surveyScoreId = surveyScoreId });
+        //        return Json(new { success = true, message = "Anket başarıyla cevaplandı.", surveyScoreId = surveyScoreId });
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = ex.Message });
+        //    }
+        //}
+
         [HttpPost]
         public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
         {
@@ -307,6 +351,10 @@ namespace SurveySystem.Controllers
                     return Json(new { success = false, errors });
                 }
 
+                // Doğru ve yanlış cevapları tutacak değişkenleri tanımlayın
+                int correctAnswers = 0;
+                int incorrectAnswers = 0;
+
                 // Survey verisini oluşturun
                 var surveyanswer = new SurveyScore
                 {
@@ -314,30 +362,49 @@ namespace SurveySystem.Controllers
                     LastName = surveyScoreData.LastName,
                     SurveyResponses = surveyScoreData.SurveyResponses,
                     //RelatedSurveyId=surveyScoreData.RelatedSurveyId,
-                    Score = (surveyScoreData.Score),
-
+                    Score = surveyScoreData.Score,
                 };
 
+                // Her bir SurveyResponse için doğru ve yanlış cevapları sayın
+                foreach (var response in surveyScoreData.SurveyResponses)
+                {
+                    var question = _context.QuestionResponse.FirstOrDefault(qr =>
+                        qr.QuestionId == response.QuestionId && qr.SurveyId == response.SurveyId);
+                    if (question != null && response.SelectedOption == question.SelectedOption)
+                    {
+                        // Doğru cevap
+                        correctAnswers++;
+                    }
+                    else
+                    {
+                        // Yanlış cevap
+                        incorrectAnswers++;
+                    }
 
-                //int surveyScoreId = _context.SurveyResponses.FirstOrDefault()?.SurveyScoreId ?? 0;
+                }
+
+                // Doğru ve yanlış cevapları SurveyScore nesnesine kaydedin
+                surveyanswer.CorrectAnswers = correctAnswers;
+                surveyanswer.IncorrectAnswers = incorrectAnswers;
 
                 // Survey verisini veritabanına ekleyin ve kaydedin
                 _context.Add(surveyanswer);
                 _context.SaveChanges();
+
                 // Eklendikten sonra surveyScoreId'yi alın
                 int surveyScoreId = surveyanswer.Id;
 
                 SurveyScore(surveyScoreId); // SurveyScore işlemini çağır
-                // SurveyScore işlemini çağırmadan önce yönlendirme yapın
-                //return RedirectToAction("SurveyScore", new { surveyScoreId = surveyScoreId });
+                                            // SurveyScore işlemini çağırmadan önce yönlendirme yapın
+                                            //return RedirectToAction("SurveyScore", new { surveyScoreId = surveyScoreId });
                 return Json(new { success = true, message = "Anket başarıyla cevaplandı.", surveyScoreId = surveyScoreId });
-
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
 
         /* surveyResponses üzerinde bir döngü oluşturulur ve her bir anket cevabı için aşağıdaki işlemler yapılır:

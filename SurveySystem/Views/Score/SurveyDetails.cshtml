@@ -23,8 +23,8 @@
             <tr>
                 <td>@score.FirstName</td>
                 <td>@score.LastName</td>
-                <td>@(ViewBag.CorrectResponses)</td> <!-- Doğru cevap sayısı -->
-                <td>@(ViewBag.IncorrectResponses)</td> <!-- Yanlış cevap sayısı -->
+                <td>@score.CorrectAnswers</td> <!-- Doğru cevap sayısı -->
+                <td>@score.IncorrectAnswers</td> <!-- Yanlış cevap sayısı -->
                 <td>@score.Score</td>
             </tr>
         }

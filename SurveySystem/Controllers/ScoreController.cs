@@ -14,6 +14,7 @@ namespace SurveySystem.Controllers
             _context = context;
         }
 
+
         [HttpGet]
         public IActionResult Index(int page = 1)
         {
@@ -23,219 +24,30 @@ namespace SurveySystem.Controllers
 
             return View(surveys);
 
-        }
+        }            
 
-        //public IActionResult SurveyDetails(int id)
-        //{
-        //    // İlgili anketi veritabanından çekin
-        //    var survey = _context.Surveys
-        //        .Include(s => s.SurveyResponses)
-        //        .ThenInclude(sr => sr.Question)
-        //        .SingleOrDefault(s => s.Id == id);
-
-        //    if (survey == null)
-        //    {
-        //        return NotFound(); // Anket bulunamazsa 404 hatası döndürün
-        //    }
-
-        //    var surveyResponses = survey.SurveyResponses.ToList();
-
-        //    var correctResponses = 0;
-        //    var incorrectResponses = 0;
-
-        //    foreach (var surveyResponse in surveyResponses)
-        //    {
-        //        var question = _context.QuestionResponse.FirstOrDefault(qr =>
-        //            qr.QuestionId == surveyResponse.QuestionId && qr.SurveyId == surveyResponse.SurveyId);
-
-        //        if (question != null && surveyResponse.SelectedOption == question.SelectedOption)
-        //        {
-        //            correctResponses++;
-        //        }
-        //        else
-        //        {
-        //            incorrectResponses++;
-        //        }
-        //    }
-
-        //    var surveyScore = new SurveyScore // Yeni bir SurveyScore nesnesi oluşturun
-        //    {
-        //        FirstName = survey.FirstName,
-        //        LastName = survey.LastName,
-        //        Score = correctResponses, // Doğru cevap sayısını kullanın
-        //        SurveyResponses = surveyResponses
-        //    };
-
-        //    return View(surveyScore);
-        //}
-
-
-        //public IActionResult SurveyDetails(int id)
-        //{
-        //    // İlgili anketi veritabanından çekin
-        //    var survey = _context.Surveys
-        //        .Include(s => s.SurveyResponses)
-        //        .ThenInclude(sr => sr.Question)
-        //        .SingleOrDefault(s => s.Id == id);
-
-        //    if (survey == null)
-        //    {
-        //        return NotFound(); // Anket bulunamazsa 404 hatası döndürün
-        //    }
-
-        //    var surveyResponses = survey.SurveyResponses.ToList();
-
-        //    var correctResponses = 0;
-        //    var incorrectResponses = 0;
-
-        //    foreach (var surveyResponse in surveyResponses)
-        //    {
-        //        var question = _context.QuestionResponse.FirstOrDefault(qr =>
-        //            qr.QuestionId == surveyResponse.QuestionId && qr.SurveyId == surveyResponse.SurveyId);
-
-        //        if (question != null && surveyResponse.SelectedOption == question.SelectedOption)
-        //        {
-        //            correctResponses++;
-        //        }
-        //        else
-        //        {
-        //            incorrectResponses++;
-        //        }
-        //    }
-
-        //    var surveyScore = new SurveyScore // Yeni bir SurveyScore nesnesi oluşturun
-        //    {
-        //        FirstName = survey.FirstName,
-        //        LastName = survey.LastName,
-        //        Score = correctResponses, // Doğru cevap sayısını kullanın
-        //        SurveyResponses = surveyResponses
-        //    };
-
-        //    // SurveyScore modelini liste içine alın
-        //    var surveyScores = new List<SurveyScore> { surveyScore };
-
-        //    return View(surveyScores); // Modeli liste içine alarak view'a gönderin
-        //}
-
-
-        private (int CorrectResponses, int IncorrectResponses) CalculateResponses(List<SurveyResponse> surveyResponses)
-        {
-            var correctResponses = 0;
-            var incorrectResponses = 0;
-
-            foreach (var surveyResponse in surveyResponses)
-            {
-                var questionResponse = _context.QuestionResponse.FirstOrDefault(qr =>
-                    qr.QuestionId == surveyResponse.QuestionId && qr.SurveyId == surveyResponse.SurveyId);
-
-                if (questionResponse != null && surveyResponse.SelectedOption == questionResponse.SelectedOption)
-                {
-                    correctResponses++;
-                }
-                else
-                {
-                    incorrectResponses++;
-                }
-            }
-
-            return (correctResponses, incorrectResponses);
-        }
 
         public IActionResult SurveyDetails(int id)
         {
-            // İlgili anketi veritabanından çekin
-            var survey = _context.Surveys
-                .Include(s => s.SurveyResponses)
-                .ThenInclude(sr => sr.Question)
-                .SingleOrDefault(s => s.Id == id);
+
+            // Verilen anket ID'sine göre ilgili anketi veritabanından çekin
+            var survey = _context.Surveys.Include(s => s.SurveyResponses)
+                                            .ThenInclude(sr => sr.SurveyScore)
+                                            .SingleOrDefault(s => s.Id == id);
 
             if (survey == null)
             {
-                return NotFound(); // Anket bulunamazsa 404 hatası döndürün
+                return NotFound();
             }
 
-            var surveyResponses = survey.SurveyResponses.ToList();
+            // Anket katılımcılarını gruplayarak al.
+            var participants = survey.SurveyResponses.GroupBy(sr => sr.SurveyScoreId)
+                                                    .Select(group => group.First().SurveyScore)
+                                                    .ToList();
 
-            // CalculateResponses fonksiyonunu kullanarak doğru ve yanlış cevapları hesaplayın
-            var (correctResponses, incorrectResponses) = CalculateResponses(surveyResponses);
+            return View(participants);
 
-            var surveyScores = surveyResponses
-                            .Select(sr => _context.SurveyScores.FirstOrDefault(ss => ss.Id == sr.SurveyScoreId))
-                            .Where(ss => ss != null)
-                            .Distinct()
-                            .ToList();
-
-            // Doğru ve yanlış cevap sayılarını view'a taşıyın
-            ViewBag.CorrectResponses = correctResponses;
-            ViewBag.IncorrectResponses = incorrectResponses;
-
-            return View(surveyScores);
         }
-
-
-        //public IActionResult SurveyDetails(int id)
-        //{
-        //    // İlgili anketi veritabanından çekin
-        //    var survey = _context.Surveys
-        //        .Include(s => s.SurveyResponses)
-        //        .ThenInclude(sr => sr.Question)
-        //        .SingleOrDefault(s => s.Id == id);
-
-        //    if (survey == null)
-        //    {
-        //        return NotFound(); // Anket bulunamazsa 404 hatası döndürün
-        //    }
-
-        //    var surveyResponses = survey.SurveyResponses.ToList();
-
-        //    var correctResponses = 0;
-        //    var incorrectResponses = 0;
-
-        //    foreach (var surveyResponse in surveyResponses)
-        //    {
-        //        var questionResponse = _context.QuestionResponse.FirstOrDefault(qr =>
-        //            qr.QuestionId == surveyResponse.QuestionId && qr.SurveyId == surveyResponse.SurveyId);
-
-        //        if (questionResponse != null && surveyResponse.SelectedOption == questionResponse.SelectedOption)
-        //        {
-        //            correctResponses++;
-        //        }
-        //        else
-        //        {
-        //            incorrectResponses++;
-        //        }
-        //    }
-
-        //    var surveyScores = surveyResponses
-        //                    .Select(sr => _context.SurveyScores.FirstOrDefault(ss => ss.Id == sr.SurveyScoreId))
-        //                    .Where(ss => ss != null)
-        //                    .Distinct()
-        //                    .ToList();
-
-        //    // Doğru ve yanlış cevap sayılarını view'a taşıyın
-        //    ViewBag.CorrectResponses = correctResponses;
-        //    ViewBag.IncorrectResponses = incorrectResponses;
-
-        //    return View(surveyScores);
-
-        //    //var surveyScore = new SurveyScore // Yeni bir SurveyScore nesnesi oluşturun
-        //    //{
-        //    //    FirstName = survey.FirstName,
-        //    //    LastName = survey.LastName,
-        //    //    Score = correctResponses, // Doğru cevap sayısını kullanın
-        //    //    SurveyResponses = surveyResponses
-        //    //};
-
-        //    //// SurveyScore modelini liste içine alın
-        //    //var surveyScores = new List<SurveyScore> { surveyScore };
-
-        //    //return View(surveyScores); // Modeli liste içine alarak view'a gönderin
-        //}
-
-
-
-
-
 
     }
 }
