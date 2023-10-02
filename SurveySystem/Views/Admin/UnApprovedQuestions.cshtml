@@ -160,7 +160,7 @@
                 </table>
             </div>
             @Html.PagedListPager(Model,
-            page=>Url.Action("QuestionList", new {page}),
+            page=>Url.Action("UnApprovedQuestions", new {page}),
             new PagedListRenderOptions(){DisplayLinkToFirstPage=PagedListDisplayMode.Always})
         </div>
     </div>
