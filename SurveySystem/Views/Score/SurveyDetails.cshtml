@@ -1,0 +1,32 @@
+﻿@model List<SurveySystem.Models.SurveyScore>
+@{
+    ViewData["Title"] = "SurveyDetails";
+    Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
+}
+
+
+<h4>Anket Detayları</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Doğru Cevap Sayısı</th>
+            <th>Yanlış Cevap Sayısı</th>
+            <th>Skor</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var score in Model)
+        {
+            <tr>
+                <td>@score.FirstName</td>
+                <td>@score.LastName</td>
+                <td>@(ViewBag.CorrectResponses)</td> <!-- Doğru cevap sayısı -->
+                <td>@(ViewBag.IncorrectResponses)</td> <!-- Yanlış cevap sayısı -->
+                <td>@score.Score</td>
+            </tr>
+        }
+    </tbody>
+</table>
