@@ -133,25 +133,6 @@ namespace SurveySystem.Controllers
 
             return View();
         }
-
-
-        [Authorize(Roles = "Admin")] //Sadece Admin'in görebileceği ekran
-        public IActionResult AdminPanel()
-        {
-            return View();
-        }
-
-        [Authorize(Roles = "Member")]
-        public IActionResult Panel()
-        {
-            return View();
-        }
-
-        [Authorize(Roles = "Member")]
-        public IActionResult MemberPage()
-        {
-            return View();
-        }
                 
         public async Task<IActionResult> SignOut()
         {

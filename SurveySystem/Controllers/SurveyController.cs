@@ -290,8 +290,8 @@ namespace SurveySystem.Controllers
                 return View(survey);
             }
 
-            // Veri bulunamazsa uygun bir işlem yapabilirsiniz
-            return View("Error"); // Örnek bir hata sayfasına yönlendirme
+            // Veri bulunamazsa uygun bir işlem yapabilirsin.
+            return NotFound(); // HTTP 404 hatası döndür
 
         }
 
