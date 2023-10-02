@@ -9,7 +9,6 @@ namespace SurveySystem.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Lütfen şifrenizi boş geçmeyiniz.")]
-        public string Password { get; set; }
-        public bool RememberMe { get; set; }
+        public string Password { get; set; }      
     }
 }

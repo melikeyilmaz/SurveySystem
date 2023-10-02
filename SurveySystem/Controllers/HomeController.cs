@@ -99,9 +99,14 @@ namespace SurveySystem.Controllers
                     ModelState.AddModelError("UserNotFound", "Bu e-posta adresine kayıtlı bir kullanıcı yoktur.");
                     return View(model);
                 }
-
-                //Bir SignIn işleminin sonucu bir tane olabilir.
-                var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);               
+                
+                /*false: Bu, lockoutOnFailure olarak adlandırılan dördüncü parametrenin değeridir.
+                 *false olarak ayarlandığında, parola doğrulaması başarısız olsa bile kullanıcının hesabının otomatik olarak 
+                 *kilitlenmeyeceğini belirtir.
+                 *true: Bu, isPersistent olarak adlandırılan beşinci parametrenin değeridir. true olarak ayarlandığında, 
+                 *kullanıcının tarayıcıyı kapatıp açsa bile oturumu açık kalır (kalıcı oturum açma). false olarak ayarlanırsa,
+                 *kullanıcı oturumu kapatır veya tarayıcıyı kapatırsa oturum sona erer (geçici oturum açma).*/
+                var signInResult = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);               
 
                 if (signInResult.Succeeded)
                 {
