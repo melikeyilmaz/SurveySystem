@@ -240,44 +240,6 @@ namespace SurveySystem.Controllers
         //}
 
 
-        //[HttpGet]
-        //public IActionResult AnsweringSurvey(string uniqueId)
-        //{
-
-        //    var surveyId = 7; // Anketin ID'sini belirleyin veya dilediğiniz bir şekilde alın
-
-        //    var surveyWithQuestions = _context.Surveys
-        //         .Where(survey => survey.UniqueId == uniqueId)
-        //        .Include(survey => survey.QuestionResponses) // İlgili soruların cevaplarını çekmek için Include kullanın
-        //        .ThenInclude(response => response.Question) // Soruları da çekmek için Include kullanın
-        //        .FirstOrDefault(survey => survey.Id == surveyId);
-
-        //    if (surveyWithQuestions != null)
-        //    {
-        //        var questions = surveyWithQuestions.QuestionResponses
-        //            .Select(response => new Question
-        //            {
-        //                QuestionText = response.Question.QuestionText,
-        //                Option1 = response.Question.Option1,
-        //                Option2 = response.Question.Option2,
-        //                Option3 = response.Question.Option3,
-        //                Option4 = response.Question.Option4,
-        //                Option5 = response.Question.Option5,
-        //                //SelectedOption = response.SelectedOption
-        //            })
-        //            .ToList();
-        //        surveyWithQuestions.Questions = questions;
-        //        // questions listesi şimdi ilgili ankete ait soruları ve cevaplarını içeriyor
-        //    }
-        //    else
-        //    {
-        //        // Belirtilen anket ID'si ile eşleşen anket bulunamadı
-        //    }
-
-        //    return View(surveyWithQuestions);
-        //}
-
-
         [HttpGet]
         public IActionResult SurveyLink()
         {
@@ -289,10 +251,12 @@ namespace SurveySystem.Controllers
                 // Verileri modele ekleyin ve view'a gönderin
                 return View(survey);
             }
-
-            // Veri bulunamazsa uygun bir işlem yapabilirsin.
-            return NotFound(); // HTTP 404 hatası döndür
-
+            else
+            {
+                // Anket verisi yoksa, ViewBag veya ViewData kullanarak uyarı mesajını ayarlayın
+                ViewBag.SurveyMessage = "Henüz hiç anket oluşturulmamıştır.";
+                return View(); // Uyarı mesajını içeren görünümü görüntüle
+            }
         }
 
         //[HttpPost]

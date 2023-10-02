@@ -10,17 +10,21 @@
             font-size: 14px;
             padding: 5px 10px;
         }
+
         h4 {
             text-align: center;
         }
+
         .toast-error {
             background-color: brown;
             color: white;
         }
+
         .toast-warning {
             background-color: darkorange;
             color: white;
         }
+
         .toast-success {
             background-color: darkgreen;
             color: white;
@@ -28,7 +32,7 @@
     </style>
 }
 @section Scripts{
-    <script type="text/javascript">      
+    <script type="text/javascript">
         $(document).ready(function () {
             // $("#startSurvey").click(function () {
             //     var uniqueId = $("#UniqueId").val();
@@ -51,32 +55,42 @@
                         } else {
                             // Anketi başlatma işlemine devam et
                             window.location.href = "/Survey/AnsweringSurvey/" + uniqueId;
-                        }                       
+                        }
                     },
                     error: function (error) {
-                        toastr.error("Anket için girdiğiniz URL linki hatalı!");                        
+                        toastr.error("Anket için girdiğiniz URL linki hatalı!");
                     }
                 });
             });
 
-        });       
+        });
     </script>
 }
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Ankete Giriş Sayfası</h4>
-            <p class="card-description">
-                Ankete giriş yapabilmek için sizinle paylaşılan URL'i aşağıdaki alana giriniz.
-            </p>
-            <div class="form-group">
-                <label for="UniqueId">Anket URL'i</label>
-                <input type="UniqueId" class="form-control" id="UniqueId" placeholder="Anket URL'i">
+
+@if (!string.IsNullOrEmpty(ViewBag.SurveyMessage))
+{
+    <div class="alert alert-warning">
+        @ViewBag.SurveyMessage
+    </div>
+}
+else
+{
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Ankete Giriş Sayfası</h4>
+                <p class="card-description">
+                    Ankete giriş yapabilmek için sizinle paylaşılan URL'i aşağıdaki alana giriniz.
+                </p>
+                <div class="form-group">
+                    <label for="UniqueId">Anket URL'i</label>
+                    <input type="text" class="form-control" id="UniqueId" placeholder="Anket URL'i">
+                </div>
+                <button type="button" class="btn btn-info btn-icon-text" id="startSurvey" data-surveyId="@Model.Id">
+                    <i class="mdi mdi-file-check btn-icon-prepend"></i>
+                    Gönder
+                </button>
             </div>
-            <button type="button" class="btn btn-info btn-icon-text" id="startSurvey" data-surveyId="@Model.Id">
-                <i class="mdi mdi-file-check btn-icon-prepend"></i>
-                Gönder
-            </button>
         </div>
     </div>
-</div>
+}
