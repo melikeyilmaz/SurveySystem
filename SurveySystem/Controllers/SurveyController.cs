@@ -126,7 +126,7 @@ namespace SurveySystem.Controllers
                 if (uniqueSurveyScoreCount >= 5)
                 {
                     // Kontenjan doluysa özel bir JSON yanıtı döndürün
-                    return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur." });
+                    return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur. 5 kişi ile sınırlıdır." });
                 }
                 //}
 
