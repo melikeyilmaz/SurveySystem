@@ -47,7 +47,6 @@ namespace SurveySystem.Controllers
                     Email = model.Email,
                     // Kullanıcı adını e-posta ile doldurun, ancak boş veya null ise e-posta adresini kullanılır.
                     UserName = string.IsNullOrWhiteSpace(model.UserName) ? model.Email : model.UserName,
-                    //UserName = model.Email, // Kullanıcı adı olarak e-posta kullanabilirsiniz veya farklı bir değer atayabilirsiniz.
                     FirstName = model.FirstName, 
                     LastName = model.LastName,   
                 };
@@ -125,18 +124,6 @@ namespace SurveySystem.Controllers
 
             }
             return View(model);
-        }
-
-        //[Authorize(Roles ="Admin")]
-        [Authorize]
-        public IActionResult GetUserInfo()
-        {
-            var userName = User.Identity.Name;
-            var role = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
-
-            User.IsInRole("Member");
-
-            return View();
         }
                 
         public async Task<IActionResult> SignOut()
