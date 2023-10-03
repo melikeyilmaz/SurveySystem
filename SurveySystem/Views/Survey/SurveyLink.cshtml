@@ -1,4 +1,5 @@
 ﻿@model SurveySystem.Models.Survey
+
 @{
     ViewData["Title"] = "SurveyLink";
     Layout = "~/Views/Shared/_NewAdminLayout.cshtml";
@@ -63,6 +64,30 @@
                 });
             });
 
+            $("#viewScoreTable").click(function () {
+                var uniqueId = $("#UniqueId").val();
+
+                // AJAX isteği ile uniqueId'yi kullanarak anketi çekin
+                $.ajax({
+                    type: "GET",
+                    url: "/Survey/GetSurveyByUniqueId/" + uniqueId, // '/' karakterini ekleyin
+                    data: { uniqueId: uniqueId },
+                    success: function (survey) {
+                        if (survey) {
+                            // Anket bulundu, yönlendirme yapabilirsiniz
+                            var surveyId = parseInt(survey.id); // Anketin ID'sini alın
+                            window.location.href = "/Score/SurveyDetails/" + surveyId; // Sayfa yönlendirmesi yapın
+                        } else {
+                            toastr.error("Belirtilen Unique ID ile eşleşen anket bulunamadı.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Anketi çekerken bir hata oluştu.");
+                    }
+                });
+            });
+
+
         });
     </script>
 }
@@ -86,9 +111,14 @@ else
                     <label for="UniqueId">Anket URL'i</label>
                     <input type="text" class="form-control" id="UniqueId" placeholder="Anket URL'i">
                 </div>
-                <button type="button" class="btn btn-info btn-icon-text" id="startSurvey" data-surveyId="@Model.Id">
+                <button type="button" class="btn btn-info btn-icon-text" id="startSurvey" @* data-surveyId="@Model.Id" *@>
                     <i class="mdi mdi-file-check btn-icon-prepend"></i>
                     Gönder
+                </button>
+
+                <button type="button" class="btn btn-primary btn-icon-text" id="viewScoreTable" @* data-surveyId="@Model.Id" *@>
+                    <i class="mdi mdi-table btn-icon-prepend"></i>
+                    Skor Tablosunu Görüntüle
                 </button>
             </div>
         </div>

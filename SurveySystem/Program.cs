@@ -127,6 +127,11 @@ app.MapControllerRoute(
             defaults: new { controller = "Survey", action = "SurveyScore" }
         );
 
+app.MapControllerRoute(
+    name: "getSurveyByUniqueId",
+    pattern: "Survey/GetSurveyByUniqueId/{uniqueId}",
+    defaults: new { controller = "Survey", action = "GetSurveyByUniqueId" });
+
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapDefaultControllerRoute();

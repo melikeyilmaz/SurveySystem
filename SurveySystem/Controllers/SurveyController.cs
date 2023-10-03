@@ -164,83 +164,6 @@ namespace SurveySystem.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-        //[HttpGet]
-        //public IActionResult AnsweringSurvey(string uniqueId, int surveyId)
-        //{
-        //    try
-        //    {
-        //        // URL'nin hatalı girilip girilmediğini kontrol et
-        //        if (string.IsNullOrEmpty(uniqueId))
-        //        {
-        //            return Json(new { error = "Geçerli bir URL giriniz." });
-        //        }
-
-        //        // Veritabanından aynı "SurveyId" ile ilişkilendirilmiş farklı "SurveyScoreId" değerlerini sayın
-        //        //int uniqueSurveyScoreCount = _context.SurveyResponses
-        //        //    .Where(sr => sr.Survey.Id == surveyId)
-        //        //    .Select(sr => sr.SurveyScoreId)
-        //        //    .Distinct() // Tekrarlayanları çıkar
-        //        //    .Count();
-        //        int uniqueSurveyScoreCount = _context.SurveyResponses
-        //                .Where(sr => sr.Survey.UniqueId == uniqueId) // UniqueId'ye göre filtrele
-        //                .Select(sr => sr.SurveyScoreId)
-        //                .Distinct()
-        //                .Count();
-
-        //        if (uniqueSurveyScoreCount >= 5)
-        //        {
-        //            // Kontenjan doluysa özel bir JSON yanıtı döndürün
-        //            return Json(new { error = "Anketin cevaplanma kontenjanı dolmuştur." });
-        //        }
-
-        //        var surveyWithQuestions = _context.Surveys
-        //                        .Where(survey => survey.UniqueId == uniqueId)
-        //                        //.Where(survey => survey.Id == surveyId)
-        //                        .Include(survey => survey.QuestionResponses)
-        //                        .ThenInclude(response => response.Question)
-        //                        .FirstOrDefault();
-        //        //// Eşleşme kontrolü
-        //        //if (surveyWithQuestions.UniqueId != uniqueId)
-        //        //{
-        //        //    return BadRequest("Hatalı URL: Belirtilen uniqueId ile anket eşleşmiyor.");
-        //        //}
-
-        //        if (surveyWithQuestions != null)
-        //        {
-        //            var questions = surveyWithQuestions.QuestionResponses
-        //                .Select(response => new Question
-        //                {
-        //                    QuestionText = response.Question.QuestionText,
-        //                    Option1 = response.Question.Option1,
-        //                    Option2 = response.Question.Option2,
-        //                    Option3 = response.Question.Option3,
-        //                    Option4 = response.Question.Option4,
-        //                    Option5 = response.Question.Option5,
-        //                })
-        //                .ToList();
-
-        //            surveyWithQuestions.Questions = questions;
-        //        }
-
-        //        return View(surveyWithQuestions);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Sunucu tarafında bir hata oluştuğunda bu blok çalışır
-        //        // Hata yakalandığında özel bir hata mesajı oluşturabilirsiniz
-        //        return BadRequest("Sunucu hatası: " + ex.Message);
-        //    }                                 
-        //}
-
-
         [HttpGet]
         public IActionResult SurveyLink()
         {
@@ -259,6 +182,35 @@ namespace SurveySystem.Controllers
                 return View(); // Uyarı mesajını içeren görünümü görüntüle
             }
         }
+
+
+        [HttpGet]
+        public IActionResult GetSurveyByUniqueId(string uniqueId)
+        {
+            try
+            {
+                // uniqueId ile anketi veritabanından bulun
+                var survey = _context.Surveys.FirstOrDefault(s => s.UniqueId == uniqueId);
+
+                if (survey != null)
+                {
+                    // Anket bulundu, JSON formatında geri döndürün
+                    return Json(survey);
+                }
+                else
+                {
+                    // Belirtilen uniqueId ile eşleşen anket bulunamadı
+                    return Json(new { error = "Belirtilen Unique ID ile eşleşen anket bulunamadı." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda hata mesajını JSON formatında geri döndürün
+                return Json(new { error = "Anketi çekerken bir hata oluştu." });
+            }
+        }
+
+
 
         //[HttpPost]
         //public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
