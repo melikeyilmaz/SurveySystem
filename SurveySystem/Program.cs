@@ -97,11 +97,6 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 
-//app.UseStaticFiles(new StaticFileOptions {
-//    RequestPath="/node_modules",
-//    FileProvider=new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"node_modules"))
-//});
-
 app.UseRouting();
 
 // Eriþim reddedildiðinde kullanýcýyý /Home/SignIn sayfasýna yönlendir
@@ -132,16 +127,9 @@ app.MapControllerRoute(
     pattern: "Survey/GetSurveyByUniqueId/{uniqueId}",
     defaults: new { controller = "Survey", action = "GetSurveyByUniqueId" });
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapDefaultControllerRoute();
-//});
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=SignIn}/{id?}");
-
-
 
 
 app.Run();
