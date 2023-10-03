@@ -91,16 +91,10 @@ namespace SurveySystem.Controllers
                 .ToPagedList(page, pageSize); // Sayfa numarası ve sayfa boyutunu belirleyin.
 
             return View(approvedQuestions);
-
-            //var approvedQuestions = _context.Questions
-            //             .Where(q => q.ApprovalStatus == ApprovalStatus.Approved) // Sadece Onaylanmış soruları listele.
-            //             .OrderByDescending(q => q.Id)
-            //             .ToList();
-
-            //return View(approvedQuestions);
-        }    
+        }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost] // Bu eylem, admin silme işlemini onayladığı zaman çalışır.       
         public IActionResult DeleteQuestion(int id)
         {
@@ -136,14 +130,7 @@ namespace SurveySystem.Controllers
                         .OrderByDescending(q => q.Id)
                         .ToPagedList(page, pageSize);
 
-            return View(unapprovedQuestions);
-
-            //var unapprovedQuestions = _context.Questions
-            //            .Where(q => q.ApprovalStatus == ApprovalStatus.PendingApproval) // Onay bekleyen soruları seç
-            //            .OrderByDescending(q => q.Id)
-            //            .ToList();
-
-            //return View(unapprovedQuestions);
+            return View(unapprovedQuestions);           
         }
 
 
@@ -196,18 +183,7 @@ namespace SurveySystem.Controllers
                 .OrderByDescending(q => q.Id)
                 .ToPagedList(page, pageSize);
 
-            return View(userQuestions);
-
-            //// Kullanıcının kimliğini al.
-            //var userId = _userManager.GetUserId(User);
-
-            //// Kullanıcının eklediği soruları filtreleyerek al.
-            //var userQuestions = _context.Questions
-            //    .Where(q => q.UserId == int.Parse(userId))
-            //    .OrderByDescending(q => q.Id)
-            //    .ToList();
-
-            //return View(userQuestions);
+            return View(userQuestions);          
         }
 
     }
