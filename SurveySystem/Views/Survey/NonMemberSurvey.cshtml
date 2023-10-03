@@ -9,18 +9,22 @@
             font-size: 14px;
             padding: 5px 10px;
         }
+
         .toast-error {
             background-color: brown;
             color: white;
         }
+
         .toast-warning {
             background-color: darkorange;
             color: white;
         }
+
         .toast-success {
             background-color: darkgreen;
             color: white;
         }
+
         #guidDiv span {
             color: red; /* Kırmızı renk */
             font-weight: bold; /* Kalın metin */
@@ -36,13 +40,42 @@
             FirstName: "",
             LastName: "",
             SurveyTitle: "",
-            IsMember: true,
+            IsMember: false,
             QuestionResponses: []
         };
 
         $(document).ready(function () {
-            // Sayfa yüklendiğinde ilk soruyu göster
-            showQuestion(currentQuestionIndex);
+
+            // Sayfa yüklendiğinde anket alanlarını gizle           
+            $(".question").hide();
+            $("#prevButton").hide();
+            $("#nextButton").hide();
+            $(".btnNonMemberSurvey").hide();
+            //$("#resultDiv").hide();
+
+            // Başlat butonuna tıklanınca
+            $("#startSurveyButton").click(function () {
+                // Ad, soyad ve anket başlığı değerlerini al
+                var firstName = $("#FirstName").val();
+                var lastName = $("#LastName").val();
+                var surveyTitle = $("#SurveyTitle").val();
+
+                // Gerekli alanlar doldurulduysa
+                if (firstName !== "" && lastName !== "" && surveyTitle !== "") {
+                    // Anket alanlarını gizle
+                    $("#surveyInfo").hide();
+
+                    // İlk soruyu görüntüle
+                    showQuestion(currentQuestionIndex);
+
+                    // Diğer butonları göster
+                    $("#prevButton").show();
+                    $("#nextButton").show();
+                    $(".btnNonMemberSurvey").show();
+                } else {
+                    toastr.warning("Ad, Soyad ve Anket Başlığı boş bırakılamaz!");
+                }
+            });
 
             // Checkbox değişikliklerini dinle
             $(".form-check-input[type='checkbox']").change(function () {
@@ -115,10 +148,10 @@
             showQuestion(currentQuestionIndex);
         }
 
-        function saveSurveyData() {           
+        function saveSurveyData() {
             $.ajax({
                 url: "/Survey/SaveSurvey",
-                type: "POST",               
+                type: "POST",
                 data: (surveyData),
                 success: function (response) {
                     if (response.success) {
@@ -133,7 +166,11 @@
                         // Kartı görünür hale getir
                         cardDiv.show();
                         toastr.success("Anket kaydedildi.");
-                        
+                        // İleri ve geri butonlarını pasif hale getir
+                        $("#prevButton").prop("disabled", true);
+                        $("#nextButton").prop("disabled", true);
+                        $(".btnNonMemberSurvey").prop("disabled", true);
+
                     } else {
                         // Hata oluştuysa hata mesajını işle.
                         toastr.error("Onaylama işlemi başarısız oldu. Hata: " + response.message);
@@ -152,23 +189,27 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Oluşturma</h4>
-            <div class="form-group">
-                <label asp-for="SurveyTitle">Anket Başlığı</label>
-                <input asp-for="SurveyTitle" type="text" class="form-control" id="SurveyTitle" name="SurveyTitle" placeholder="Anket Başlığını Giriniz">
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="FirstName">Ad</label>
-                        <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Ad">
+            <!-- Anket başlığı, ad ve soyad alanları -->
+            <div id="surveyInfo">
+                <div class="form-group">
+                    <label asp-for="SurveyTitle">Anket Başlığı</label>
+                    <input asp-for="SurveyTitle" type="text" class="form-control" id="SurveyTitle" name="SurveyTitle" placeholder="Anket Başlığını Giriniz">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FirstName">Ad</label>
+                            <input asp-for="FirstName" type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Ad">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LastName">Soyad</label>
+                            <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName" placeholder="Soyad">
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="LastName">Soyad</label>
-                        <input asp-for="LastName" type="text" class="form-control" id="LastName" name="LastName" placeholder="Soyad">
-                    </div>
-                </div>
+                <button type="button" class="btn btn-success btn-icon-text mt-3" id="startSurveyButton"><i class="mdi mdi-book-variant btn-icon-prepend"></i>Anketi Başlat</button>
             </div>
             <!-- Sorular burada görüntülenir -->
             @for (var i = 0; i < Model.Questions.Count; i++)

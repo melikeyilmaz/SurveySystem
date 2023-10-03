@@ -49,7 +49,6 @@ namespace SurveySystem.Models
 
         // Sorunun hangi anketlere ait olduğunu göstermek için anketlerin listesi
         public virtual List<Survey>? Surveys { get; set; }
-        //public List<Survey>? Surveys { get; set; }
 
     }
 }

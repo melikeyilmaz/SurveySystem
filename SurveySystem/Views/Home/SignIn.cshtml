@@ -2,7 +2,16 @@
 @{
     Layout = null;
 }
-
+<style>
+    #background_img {
+  background-image: url('/webtheme/Triangle/images/questions.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* İstenirse diğer arka plan özellikleri de burada ayarlanabilir */
+  width: 100%;
+  height: 100%;
+}
+</style>
 <!DOCTYPE html>
 <html lang="en">
 @await Html.PartialAsync("/Views/Shared/_HeadPartial.cshtml")
@@ -64,8 +73,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-lg-6 login-half-bg d-flex flex-row">
-                        <img src="~/webtheme/Triangle/images/question.png" alt="background-image">
+                    <div id="background_img" class="col-lg-6 login-half-bg d-flex flex-row" >
                         <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2018  All rights reserved.</p>
                     </div>
                 </div>
