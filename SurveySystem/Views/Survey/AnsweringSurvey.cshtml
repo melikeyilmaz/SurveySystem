@@ -36,13 +36,10 @@
         var questionIndex;
 
         $(document).ready(function () {
-            // Sayfa yüklendiğinde ilk soruyu göster
-            //showQuestion(currentQuestionIndex);
 
             // Sayfa yüklendiğinde anket alanlarını gizle
             $(".question").hide();
             $("#btnCompleteSurvey").hide();
-            //$("#resultDiv").hide();
 
             // Başlat butonuna tıklanınca
             $("#startSurveyAnswer").click(function () {
@@ -58,8 +55,6 @@
 
                     // İlk soruyu görüntüle
                     showQuestion(currentQuestionIndex);
-
-                    $("#btnCompleteSurvey").show();
 
                 } else {
                     toastr.warning("Ad ve Soyad boş bırakılamaz!");
@@ -116,8 +111,6 @@
 
             // Anketi tamamla butonuna tıklanma olayını dinle
             $("#btnCompleteSurvey").click(function () {
-                // // Form verilerini al
-                // var formData = $("#surveyForm").serialize();
 
                 // JSON nesnesi oluşturun
                 var surveyScoreData = {
@@ -164,6 +157,13 @@
         function showQuestion(index) {
             $(".question").hide();
             $(".question:eq(" + index + ")").show();
+
+            // Eğer son soruya geldiyseniz, Anketi Tamamla butonunu görünür yapın.
+            if (index === @Model.Questions.Count - 1) {
+                $("#btnCompleteSurvey").show();
+            } else {
+                $("#btnCompleteSurvey").hide();
+            }
         }
     </script>
 }

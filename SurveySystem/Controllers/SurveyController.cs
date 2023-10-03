@@ -211,51 +211,6 @@ namespace SurveySystem.Controllers
         }
 
 
-
-        //[HttpPost]
-        //public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
-        //{
-        //    try
-        //    {
-        //        // Verileri doğrulama
-        //        if (!ModelState.IsValid)
-        //        {
-        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        //            return Json(new { success = false, errors });
-        //        }
-
-        //        // Survey verisini oluşturun
-        //        var surveyanswer = new SurveyScore
-        //        {
-        //            FirstName = surveyScoreData.FirstName,
-        //            LastName = surveyScoreData.LastName,
-        //            SurveyResponses = surveyScoreData.SurveyResponses,
-        //            //RelatedSurveyId=surveyScoreData.RelatedSurveyId,
-        //            Score = (surveyScoreData.Score),
-
-        //        };
-
-
-        //        //int surveyScoreId = _context.SurveyResponses.FirstOrDefault()?.SurveyScoreId ?? 0;
-
-        //        // Survey verisini veritabanına ekleyin ve kaydedin
-        //        _context.Add(surveyanswer);
-        //        _context.SaveChanges();
-        //        // Eklendikten sonra surveyScoreId'yi alın
-        //        int surveyScoreId = surveyanswer.Id;
-
-        //        SurveyScore(surveyScoreId); // SurveyScore işlemini çağır
-        //        // SurveyScore işlemini çağırmadan önce yönlendirme yapın
-        //        //return RedirectToAction("SurveyScore", new { surveyScoreId = surveyScoreId });
-        //        return Json(new { success = true, message = "Anket başarıyla cevaplandı.", surveyScoreId = surveyScoreId });
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}
-
         [HttpPost]
         public IActionResult CompleteSurveyAnswer(SurveyScore surveyScoreData)
         {
@@ -369,23 +324,6 @@ namespace SurveySystem.Controllers
         }
 
 
-
-        // Üye olan kullanıcılar 10 soruluk bir anket oluşturabilir. Bu anketi oluştururken sistemde tanımlı tüm
-        //sorular üzerinden seçim yaparak oluşturabilir.
-
-        //[HttpGet]
-        //public IActionResult MemberSurvey()
-        //{
-        //    var allQuestions = _context.Questions.ToList();
-
-        //    var survey = new Survey
-        //    {
-        //        Questions = allQuestions
-        //    };
-
-        //    return View(survey);
-        //}
-
         /* Üye olan kullanıcılar 10 soruluk bir anket oluşturabilir. Bu anketi oluştururken sistemde tanımlı tüm
         sorular üzerinden seçim yaparak oluşturabilir.*/
         [Authorize(Roles = "Member")]
@@ -420,61 +358,6 @@ namespace SurveySystem.Controllers
 
             return View(survey);
         }
-
-
-        //public IActionResult AnsweringSurvey(string uniqueId)
-        //{
-        //    // Benzersiz ID'ye sahip anketi veritabanından alın
-        //    var survey = _context.Surveys.SingleOrDefault(s => s.UniqueId == uniqueId);
-
-        //    if (survey == null)
-        //    {
-        //        // Anket bulunamadı, hata sayfasına yönlendirin veya uygun bir işlem yapın
-        //        return RedirectToAction("Error");
-        //    }
-
-        //    // Anketi görüntüleme sayfasını göster
-        //    return View(survey);
-        //}
-
-
-        //public IActionResult SaveSurvey(Survey surveyData)
-        //{
-        //    try
-        //    {
-        //        // Verileri doğrulama
-        //        if (!ModelState.IsValid)
-        //        {
-        //            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        //            return Json(new { success = false, errors });
-        //        }
-
-        //        // Benzersiz bir kimlik oluştur
-        //        string uniqueId = Guid.NewGuid().ToString();
-
-        //        // Survey verisini oluşturun
-        //        var survey = new Survey
-        //        {
-        //            FirstName = surveyData.FirstName,
-        //            LastName = surveyData.LastName,
-        //            SubmissionDate = DateTime.Now,
-        //            QuestionResponses = surveyData.QuestionResponses,
-        //            UniqueId = uniqueId // Benzersiz kimliği ankete atayın
-        //        };
-
-        //        // Survey verisini veritabanına ekleyin ve kaydedin
-        //        _context.Surveys.Add(survey);
-        //        _context.SaveChanges();
-
-        //        // Oluşturulan benzersiz URL'yi oluşturun
-        //        string surveyUrl = Url.Action("SurveyPage", "ControllerName", new { uniqueId });
-
-        //        return Json(new { success = true, surveyUrl });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}       
+   
     }
 }
