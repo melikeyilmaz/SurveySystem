@@ -37,7 +37,35 @@
 
         $(document).ready(function () {
             // Sayfa yüklendiğinde ilk soruyu göster
-            showQuestion(currentQuestionIndex);
+            //showQuestion(currentQuestionIndex);
+
+            // Sayfa yüklendiğinde anket alanlarını gizle
+            $(".question").hide();
+            $("#btnCompleteSurvey").hide();
+            //$("#resultDiv").hide();
+
+            // Başlat butonuna tıklanınca
+            $("#startSurveyAnswer").click(function () {
+                // Ad, soyad ve anket başlığı değerlerini al
+                var firstName = $("#FirstName").val();
+                var lastName = $("#LastName").val();
+                // var surveyTitle = $("#SurveyTitle").val();
+
+                // Gerekli alanlar doldurulduysa
+                if (firstName !== "" && lastName !== "") {
+                    // Anket alanlarını gizle
+                    $("#surveyInfo").hide();
+
+                    // İlk soruyu görüntüle
+                    showQuestion(currentQuestionIndex);
+
+                    $("#btnCompleteSurvey").show();
+
+                } else {
+                    toastr.warning("Ad ve Soyad boş bırakılamaz!");
+                }
+            });
+
 
             $("input[type='radio']").change(function () {
                 //Hangi soruya yanıt verdiğini belirlemek için this, olayı tetikleyen radyo butonunu temsil eder
@@ -143,20 +171,27 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Anket Cevaplama Sayfası</h4>
-            @* <form id="surveyForm" asp-action="SubmitSurveyAnswer" method="post"> *@
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="FirstName">Ad</label>
-                        <input type="text" class="form-control" id="FirstName" name="FirstName">
+            <!-- Anket başlığı, ad ve soyad alanları -->
+            <div id="surveyInfo">
+                <div class="form-group">
+                    <label asp-for="SurveyTitle">Anket Başlığı</label>
+                    <input asp-for="SurveyTitle" type="text" class="form-control" id="SurveyTitle" name="SurveyTitle" placeholder="Anket Başlığını Giriniz" disabled>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FirstName">Ad</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LastName">Soyad</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName">
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="LastName">Soyad</label>
-                        <input type="text" class="form-control" id="LastName" name="LastName">
-                    </div>
-                </div>
+                <button type="button" class="btn btn-success btn-icon-text mt-3" id="startSurveyAnswer"><i class="mdi mdi-book-variant btn-icon-prepend"></i>Anketi Başlat</button>
             </div>
             <!-- Sorular burada görüntülenir -->
             @for (var i = 0; i < Model.Questions.Count; i++)
@@ -164,7 +199,8 @@
                 <div class="card mt-3 question">
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="question_@(i + 1)">Soru @(i + 1)</label>
+                            <label for="question_@(i + 1)" style="font-weight: bold;">Soru @(i + 1)</label>
+                           @*  <label for="question_@(i + 1)">Soru @(i + 1)</label> *@
                             <p>@Model.Questions[i].QuestionText</p>
                             <input type="text" id="questionId_@(i + 1)" class="question-Id" data-questionId="@i" name="Questions[@i].QuestionId" value="@Model.QuestionResponses[i].QuestionId" />
                             <!-- Doğru Cevabı ve Anket Id buraya ekledim -->
